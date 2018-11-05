@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+        <TextView
+            android:id="@+id/txtTenTruyen"
+            android:paddingLeft="15dp"
+            android:text="Tên truyện"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+        <TextView
+            android:id="@+id/txtNoiDung"
+            android:paddingLeft="5dp"
+            android:text="Nội dung truyện"
+            android:textSize="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:layout_width="match_parent"
+            android:layout_height="25dp">
+            <TextView
+                android:id="@+id/txtTacGia"
+                android:layout_weight="5"
+                android:gravity="left"
+                android:paddingLeft="10dp"
+                android:text="Tác giả"
+                android:layout_width="0dp"
+                android:layout_height="25dp" />
+            <TextView
+                android:id="@+id/txtNgayTao"
+                android:paddingRight="10dp"
+                android:layout_weight="5"
+                android:text="Ngày tạo"
+                android:gravity="right"
+                android:layout_width="0dp"
+                android:layout_height="25dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
