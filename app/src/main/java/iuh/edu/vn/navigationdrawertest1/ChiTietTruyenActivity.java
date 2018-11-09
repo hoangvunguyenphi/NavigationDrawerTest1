@@ -1,11 +1,16 @@
 package iuh.edu.vn.navigationdrawertest1;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+import iuh.edu.vn.navigationdrawertest1.fragment.ChiTietTruyen_Fragment;
 
 public class ChiTietTruyenActivity extends AppCompatActivity {
 
@@ -24,6 +29,38 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+        Intent intent = getIntent();
+        Bundle bundle = intent.getBundleExtra("selectedTruyen");
+        ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
+        cttr.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frag_chitiet,cttr).commit();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_truyen,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.frag_chitiet);
+        TextView tv = frag.getActivity().findViewById(R.id.noiDung);
+
+        switch (item.getItemId()){
+            case R.id.light:
+                frag.getView().setBackgroundColor(Color.WHITE);
+                tv.setTextColor(Color.BLACK);
+                return true;
+            case R.id.yellow:
+                frag.getView().setBackgroundColor(Color.parseColor("#FFFFCC"));
+                tv.setTextColor(Color.BLACK);
+                return true;
+            case R.id.dark:
+                frag.getView().setBackgroundColor(Color.BLACK);
+                tv.setTextColor(Color.WHITE);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

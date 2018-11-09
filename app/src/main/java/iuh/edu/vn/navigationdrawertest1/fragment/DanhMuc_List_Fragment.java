@@ -3,7 +3,6 @@ package iuh.edu.vn.navigationdrawertest1.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ public class DanhMuc_List_Fragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         khoiTaoDataDanhMucList();
         View view=inflater.inflate(R.layout.danhmuc_list_fragment,container,false);
-        DanhMuc_Custom_Adapter danhMuc_custom_adapter=new DanhMuc_Custom_Adapter(getContext(),R.layout.danhmuc_custom_adapter,danhMucList);
+        DanhMuc_Custom_Adapter danhMuc_custom_adapter=new DanhMuc_Custom_Adapter(getContext(), R.layout.danhmuc_custom_adapter,danhMucList);
         setListAdapter(danhMuc_custom_adapter);
         return view;
     }
