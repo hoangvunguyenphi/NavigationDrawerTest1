@@ -9,5 +9,4 @@
     <string name="action_bookmark">Bookmark</string>
     <string name="title_activity_danh_sach_truyen">DanhSachTruyenActivity</string>
     <string name="title_activity_chi_tiet_truyen">ChiTietTruyenActivity</string>
-    <string name="title_activity_main2">Main2Activity</string>
 </resources>
