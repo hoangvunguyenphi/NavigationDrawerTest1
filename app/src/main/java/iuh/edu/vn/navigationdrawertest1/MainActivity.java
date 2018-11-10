@@ -1,6 +1,8 @@
 package iuh.edu.vn.navigationdrawertest1;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,14 +15,15 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setTitle("Danh sách thể loại");
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -78,9 +81,12 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "Thoát", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_setting) {
             Toast.makeText(MainActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
-
         } else if (id == R.id.nav_about) {
             Toast.makeText(MainActivity.this, "Giới thiệu", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.nav_bookmark) {
+            Toast.makeText(MainActivity.this, "Bookmart", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.nav_history) {
+            Toast.makeText(MainActivity.this, "Lịch sử", Toast.LENGTH_SHORT).show();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

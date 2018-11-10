@@ -13,21 +13,25 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".DanhSachTruyenActivity"
+            android:label="@string/title_activity_danh_sach_truyen"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChiTietTruyenActivity"
+            android:label="@string/title_activity_chi_tiet_truyen"
+            android:parentActivityName=".DanhSachTruyenActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".DanhSachTruyenActivity"
-            android:label="@string/title_activity_danh_sach_truyen"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ChiTietTruyenActivity"
-            android:label="@string/title_activity_chi_tiet_truyen"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
-

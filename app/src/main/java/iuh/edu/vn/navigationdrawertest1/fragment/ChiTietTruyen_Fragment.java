@@ -42,6 +42,7 @@ public class ChiTietTruyen_Fragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
         return view;
 
     }
