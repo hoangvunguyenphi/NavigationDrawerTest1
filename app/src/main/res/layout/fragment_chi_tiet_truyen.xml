@@ -11,5 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Noi dung truyen" />
-
+    <SeekBar
+        android:id="@+id/seekBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="#a19d9d"
+        android:max="40"
+        android:progress="20"
+        android:thumb="@android:drawable/checkbox_off_background" />
 </FrameLayout>

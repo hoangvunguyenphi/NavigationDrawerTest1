@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import iuh.edu.vn.navigationdrawertest1.fragment.ChiTietTruyen_Fragment;
@@ -46,7 +48,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.frag_chitiet);
         TextView tv = frag.getActivity().findViewById(R.id.noiDung);
-
+        SeekBar seekBar = frag.getActivity().findViewById(R.id.seekBarSize);
         switch (item.getItemId()){
             case R.id.light:
                 frag.getView().setBackgroundColor(Color.WHITE);
@@ -59,6 +61,9 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
             case R.id.dark:
                 frag.getView().setBackgroundColor(Color.BLACK);
                 tv.setTextColor(Color.WHITE);
+                return true;
+            case R.id.optionSize:
+                seekBar.setVisibility(View.VISIBLE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
