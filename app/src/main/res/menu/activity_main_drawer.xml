@@ -6,28 +6,28 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_home"
             android:title="Trang chủ" />
         <item
             android:id="@+id/nav_search"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_search"
             android:title="Tìm kiếm" />
 
         <item
             android:id="@+id/nav_history"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_bookmark"
             android:title="Bookmark" />
         <item
             android:id="@+id/nav_bookmark"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_history"
             android:title="Lịch sử" />
         <item
             android:id="@+id/nav_exit"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_exit"
             android:title="Thoát" />
     </group>
 
-    <item android:title="App setting">
+    <item android:title="Ứng dụng">
         <menu>
             <item
                 android:id="@+id/nav_setting"
@@ -35,7 +35,7 @@
                 android:title="Cài đặt" />
             <item
                 android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_menu_about"
                 android:title="Giới thiệu" />
         </menu>
     </item>

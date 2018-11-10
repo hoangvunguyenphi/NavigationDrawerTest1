@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/addToBookMark"
+        android:icon="@drawable/ic_menu_bookmark_null"
+        android:title="Thêm vào bookmark"
+        app:showAsAction="always">
+    </item>
     <item
         android:id="@+id/light"
         android:title="Màn hình sáng"
+        app:showAsAction="never"
         />
     <item
         android:id="@+id/yellow"
         android:title="Màn hình vàng"
+        app:showAsAction="never"
         />
     <item
         android:id="@+id/dark"
         android:title="Chế độ ban đêm"
+        app:showAsAction="never"
         />
     <item
         android:id="@+id/optionFont"
         android:title="Tùy chỉnh cỡ chữ"
+        app:showAsAction="never"
         />
 </menu>
