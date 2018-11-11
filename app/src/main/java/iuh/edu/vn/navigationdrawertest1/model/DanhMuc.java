@@ -1,22 +1,27 @@
 package iuh.edu.vn.navigationdrawertest1.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+@IgnoreExtraProperties
 public class DanhMuc implements Serializable {
-    private String maDanhMuc;
+    private String _id;
     private String tenDanhMuc;
-
-    private List<Truyen> listTruyen=null;
     public DanhMuc(){
     }
-    public String getMaDanhMuc() {
-        return maDanhMuc;
+    public DanhMuc(String _id, String tenDanhMuc) {
+        this._id = _id;
+        this.tenDanhMuc = tenDanhMuc;
     }
 
-    public void setMaDanhMuc(String maDanhMuc) {
-        this.maDanhMuc = maDanhMuc;
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getTenDanhMuc() {
@@ -30,47 +35,40 @@ public class DanhMuc implements Serializable {
     @Override
     public String toString() {
         return "DanhMuc{" +
-                "maDanhMuc='" + maDanhMuc + '\'' +
+                "_id='" + _id + '\'' +
                 ", tenDanhMuc='" + tenDanhMuc +"}";
     }
+//    public boolean isDuplicateTruyen(Truyen tr){
+//        for(Truyen tr1: listTruyen){
+//            if(tr1.get_id().trim().equalsIgnoreCase(tr.get_id().trim())){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//    public boolean addTruyen(Truyen tr){
+//        boolean isDuplicate=isDuplicateTruyen(tr);
+//        if(!isDuplicate){
+//            tr.setDanhMuc(this);
+//            listTruyen.add(tr);
+//            return true;
+//        }
+//        else{
+//            return false;
+//        }
+//    }
+//    public List<Truyen> getListTruyen() {
+//        return listTruyen;
+//    }
+//
+//    public void setListTruyen(List<Truyen> listTruyen) {
+//        this.listTruyen = listTruyen;
+//    }
+//    public Truyen getTruyen(int i){
+//        return  listTruyen.get(i);
+//    }
+//    public int size(){
+//        return listTruyen.size();
+//    }
 
-    public boolean isDuplicateTruyen(Truyen tr){
-        for(Truyen tr1: listTruyen){
-            if(tr1.get_id().trim().equalsIgnoreCase(tr.get_id().trim())){
-                return true;
-            }
-        }
-        return false;
-    }
-    public boolean addTruyen(Truyen tr){
-        boolean isDuplicate=isDuplicateTruyen(tr);
-        if(!isDuplicate){
-            tr.setDanhMuc(this);
-            listTruyen.add(tr);
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    public List<Truyen> getListTruyen() {
-        return listTruyen;
-    }
-
-    public void setListTruyen(List<Truyen> listTruyen) {
-        this.listTruyen = listTruyen;
-    }
-
-    public Truyen getTruyen(int i){
-        return  listTruyen.get(i);
-    }
-    public int size(){
-        return listTruyen.size();
-    }
-    public DanhMuc(String maDanhMuc, String tenDanhMuc) {
-        this.maDanhMuc = maDanhMuc;
-        this.tenDanhMuc = tenDanhMuc;
-        this.listTruyen=new ArrayList<>();
-    }
 }

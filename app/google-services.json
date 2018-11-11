@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1068261381341",
+    "firebase_url": "https://btl-android-bookstory.firebaseio.com",
+    "project_id": "btl-android-bookstory",
+    "storage_bucket": "btl-android-bookstory.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068261381341:android:01d8c88bdd68b345",
+        "android_client_info": {
+          "package_name": "iuh.edu.vn.navigationdrawertest1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1068261381341-cipue3eaaag9ebje6t2rjp9fl4sq7edo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "iuh.edu.vn.navigationdrawertest1",
+            "certificate_hash": "9c3963b4e77c5e022debf74528196633d03dfaf4"
+          }
+        },
+        {
+          "client_id": "1068261381341-iqaenda1oh7pm0q1tgr2kr0hbt8hjqbb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVbiHnJ92SVHnwSMQRl8iXdaHcAiM2FyY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1068261381341-iqaenda1oh7pm0q1tgr2kr0hbt8hjqbb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

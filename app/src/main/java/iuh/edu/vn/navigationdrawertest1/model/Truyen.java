@@ -1,16 +1,47 @@
 package iuh.edu.vn.navigationdrawertest1.model;
 
-import java.io.Serializable;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+@IgnoreExtraProperties
 public class Truyen implements Serializable {
     private String _id;
     private String tieuDe;
-    private DanhMuc danhMuc;
+    private String danhMuc;
     private String tacGia;
     private String noiDung;
     private String ngayTao;
-    private String hashTag;
+
+    public Truyen() {
+    }
+
+    @Override
+    public String toString() {
+        return "Truyen{" +
+                "_id='" + _id + '\'' +
+                ", tieuDe='" + tieuDe + '\'' +
+                ", danhMuc='" + danhMuc + '\'' +
+                ", tacGia='" + tacGia + '\'' +
+                ", noiDung='" + noiDung + '\'' +
+                ", ngayTao='" + ngayTao + '\'' +
+                '}';
+    }
+
+    public Truyen(String _id, String tieuDe, String danhMuc, String tacGia, String noiDung, String ngayTao) {
+        this._id = _id;
+        this.tieuDe = tieuDe;
+        this.danhMuc = danhMuc;
+        this.tacGia = tacGia;
+        this.noiDung = noiDung;
+        this.ngayTao = ngayTao;
+    }
+
     public String get_id() {
+
         return _id;
     }
 
@@ -26,11 +57,11 @@ public class Truyen implements Serializable {
         this.tieuDe = tieuDe;
     }
 
-    public DanhMuc getDanhMuc() {
+    public String getDanhMuc() {
         return danhMuc;
     }
 
-    public void setDanhMuc(DanhMuc danhMuc) {
+    public void setDanhMuc(String danhMuc) {
         this.danhMuc = danhMuc;
     }
 
@@ -56,49 +87,5 @@ public class Truyen implements Serializable {
 
     public void setNgayTao(String ngayTao) {
         this.ngayTao = ngayTao;
-    }
-
-    public String getHashTag() {
-        return hashTag;
-    }
-
-    public void setHashTag(String hashTag) {
-        this.hashTag = hashTag;
-    }
-
-    @Override
-    public String toString() {
-        return "Truyen{" +
-                "_id='" + _id + '\'' +
-                ", tieuDe='" + tieuDe + '\'' +
-                ", danhMuc=" + danhMuc.getTenDanhMuc() +
-                ", tacGia='" + tacGia + '\'' +
-                ", noiDung='" + noiDung + '\'' +
-                ", ngayTao='" + ngayTao + '\'' +
-                ", hashTag='" + hashTag + '\'' +
-                '}';
-    }
-
-    public Truyen(String _id, String tieuDe, DanhMuc danhMuc, String tacGia, String noiDung, String ngayTao, String hashTag) {
-
-        this._id = _id;
-        this.tieuDe = tieuDe;
-        this.danhMuc = danhMuc;
-        this.tacGia = tacGia;
-        this.noiDung = noiDung;
-        this.ngayTao = ngayTao;
-        this.hashTag = hashTag;
-    }
-    public Truyen(String _id, String tieuDe, String tacGia, String noiDung, String ngayTao, String hashTag) {
-
-        this._id = _id;
-        this.tieuDe = tieuDe;
-        this.tacGia = tacGia;
-        this.noiDung = noiDung;
-        this.ngayTao = ngayTao;
-        this.hashTag = hashTag;
-    }
-    public Truyen(){
-
     }
 }

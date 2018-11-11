@@ -3,6 +3,7 @@ package iuh.edu.vn.navigationdrawertest1;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +14,17 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import iuh.edu.vn.navigationdrawertest1.custom_adapter.Truyen_List_Custom_Adapter;
 import iuh.edu.vn.navigationdrawertest1.fragment.ChiTietTruyen_Fragment;
 import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
@@ -55,15 +64,33 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.frag_chitiet);
         TextView tv = frag.getActivity().findViewById(R.id.noiDung);
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
         SeekBar seekBar = frag.getActivity().findViewById(R.id.seekBarSize);
         switch (item.getItemId()){
             case android.R.id.home: //nút back trở lại
-                Intent intent1 = new Intent(this,DanhSachTruyenActivity.class);
-                Bundle bundle1 = new Bundle();
-                bundle1.putSerializable("selectedDanhMuc",truyen.getDanhMuc());
-                intent1.putExtra("dataDanhMuc",bundle1);
-                startActivity(intent1);
-                finish();
+                final Intent intent1 = new Intent(this,DanhSachTruyenActivity.class);
+                final Bundle bundle1 = new Bundle();
+                final ArrayList<DanhMuc> arrDm= new ArrayList<>();
+                Query query = rootRef.child("allCategory").orderByChild("_id").equalTo(truyen.getDanhMuc());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            DanhMuc danhMuc =new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class) );
+                            arrDm.add(danhMuc);
+                        }
+                        bundle1.putSerializable("selectedDanhMuc",arrDm.get(0));
+                        intent1.putExtra("dataDanhMuc",bundle1);
+                        startActivity(intent1);
+                        finish();
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
                 return true;
             case R.id.light:
                 frag.getView().setBackgroundColor(Color.WHITE);
