@@ -22,7 +22,7 @@
         app:showAsAction="never"
         />
     <item
-        android:id="@+id/optionFont"
+        android:id="@+id/optionSize"
         android:title="Tùy chỉnh cỡ chữ"
         app:showAsAction="never"
         />
