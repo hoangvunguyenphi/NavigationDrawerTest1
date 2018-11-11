@@ -2,27 +2,35 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:orientation="vertical"
+    android:paddingTop="7dp"
     android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="90dp">
         <TextView
             android:id="@+id/txtTenTruyen"
             android:paddingLeft="15dp"
             android:text="Tên truyện"
             android:textSize="20dp"
+            android:textColor="#696d77"
             android:textStyle="bold"
-            android:layout_width="match_parent"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:layout_width="fill_parent"
             android:layout_height="30dp" />
         <TextView
             android:id="@+id/txtNoiDung"
             android:paddingLeft="5dp"
             android:text="Nội dung truyện"
-            android:textSize="15dp"
+            android:textSize="14sp"
+            android:textStyle="italic"
             android:layout_width="match_parent"
-            android:layout_height="25dp" />
+            android:layout_height="35dp" />
         <LinearLayout
+            android:paddingTop="5dp"
             android:orientation="horizontal"
             android:weightSum="10"
             android:layout_width="match_parent"

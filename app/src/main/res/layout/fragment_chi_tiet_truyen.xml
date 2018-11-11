@@ -2,11 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="10dp"
     android:layout_height="match_parent"
     tools:context=".fragment.ChiTietTruyen_Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:padding="10dp"
         android:id="@+id/noiDung"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,8 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:background="#a19d9d"
+        android:background="@color/colorPrimary"
         android:max="40"
         android:progress="20"
-        android:thumb="@android:drawable/checkbox_off_background" />
+        android:thumb="@android:drawable/checkbox_off_background" >
+    </SeekBar>
 </FrameLayout>

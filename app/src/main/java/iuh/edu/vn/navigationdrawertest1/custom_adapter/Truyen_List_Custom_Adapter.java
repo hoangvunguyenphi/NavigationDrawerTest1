@@ -32,6 +32,7 @@ public class Truyen_List_Custom_Adapter  extends ArrayAdapter<Truyen> {
         convertView=LayoutInflater.from(getContext()).inflate(R.layout.truyen_list_custom_adapter,parent,false);
         Truyen truyen=objects.get(position);
         TextView txtTenTruyen=(TextView)convertView.findViewById(R.id.txtTenTruyen);
+        txtTenTruyen.setSelected(true);
         TextView txtNoiDung=(TextView)convertView.findViewById(R.id.txtNoiDung);
         TextView txtTacGia=(TextView)convertView.findViewById(R.id.txtTacGia);
         TextView txtNgayTao = (TextView)convertView.findViewById(R.id.txtNgayTao);

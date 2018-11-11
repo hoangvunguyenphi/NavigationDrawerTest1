@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import iuh.edu.vn.navigationdrawertest1.R;
+import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 
 public class ChiTietTruyen_Fragment extends Fragment {
@@ -27,6 +28,8 @@ public class ChiTietTruyen_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
         Bundle bundle = this.getArguments();
+        Truyen truyen= (Truyen)bundle.getSerializable("selectedTruyen");
+
         noiDung = view.findViewById(R.id.noiDung);
         seekBar = view.findViewById(R.id.seekBarSize);
         seekBar.setVisibility(View.GONE);
@@ -34,21 +37,22 @@ public class ChiTietTruyen_Fragment extends Fragment {
         noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2)+10);
         noiDung.setTextColor(Color.BLACK);
         noiDung.setMovementMethod(new ScrollingMovementMethod());
-        StringBuffer stringBuffer = new StringBuffer();
-        String data = "";
-        InputStream is = this.getResources().openRawResource(R.raw.test);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        if(is!=null){
-            try {
-                while ((data = reader.readLine())!=null){
-                    stringBuffer.append("\t"+data + "\n");
-                }
-                noiDung.setText(stringBuffer);
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        noiDung.setText(truyen.getNoiDung());
+//        StringBuffer stringBuffer = new StringBuffer();
+//        String data = "";
+//        InputStream is = this.getResources().openRawResource(R.raw.test);
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//        if(is!=null){
+//            try {
+//                while ((data = reader.readLine())!=null){
+//                    stringBuffer.append("\t"+data + "\n");
+//                }
+//                noiDung.setText(stringBuffer);
+//                is.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         noiDung.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
