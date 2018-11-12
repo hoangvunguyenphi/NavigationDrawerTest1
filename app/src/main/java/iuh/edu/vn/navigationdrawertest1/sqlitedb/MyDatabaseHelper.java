@@ -24,8 +24,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NGAYTAO="ngayTao";
     private static final String COLUMN_DANHMUC="danhMuc";
 
-
-
     public MyDatabaseHelper( Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
