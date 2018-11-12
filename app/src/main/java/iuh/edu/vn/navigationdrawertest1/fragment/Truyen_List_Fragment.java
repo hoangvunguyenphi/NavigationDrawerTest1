@@ -140,3 +140,4 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
         setListAdapter(truyen_list_custom_adapter);
     }
 }
+
