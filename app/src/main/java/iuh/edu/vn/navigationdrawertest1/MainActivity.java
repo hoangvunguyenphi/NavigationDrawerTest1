@@ -11,7 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import iuh.edu.vn.navigationdrawertest1.fragment.History_List_Fragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -19,7 +22,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,6 +91,8 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "Bookmart", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_history) {
             Toast.makeText(MainActivity.this, "Lịch sử", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(MainActivity.this,HistoryActivity.class);
+            startActivity(i);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

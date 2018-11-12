@@ -1,5 +1,6 @@
 package iuh.edu.vn.navigationdrawertest1.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -42,10 +44,11 @@ public class DanhMuc_List_Fragment extends ListFragment {
     private List<DanhMuc> danhMucList;
     private ArrayList<DanhMuc> arrDanhMuc;
     private DatabaseReference rootRef ;
+    ProgressBar progressBar;
     DatabaseReference danhMucRef;
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.danhmuc_list_fragment,container,false);
+        final View view=inflater.inflate(R.layout.danhmuc_list_fragment,container,false);
         rootRef = FirebaseDatabase.getInstance().getReference();
         danhMucRef=rootRef.child("allCategory");
         danhMucRef.addValueEventListener(new ValueEventListener() {

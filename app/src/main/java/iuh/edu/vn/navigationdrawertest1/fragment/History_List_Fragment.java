@@ -2,10 +2,9 @@ package iuh.edu.vn.navigationdrawertest1.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,15 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.support.v7.widget.SearchView;
-import android.widget.TextView;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,68 +22,54 @@ import iuh.edu.vn.navigationdrawertest1.R;
 import iuh.edu.vn.navigationdrawertest1.custom_adapter.Truyen_List_Custom_Adapter;
 import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
+import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
-public class Truyen_List_Fragment  extends ListFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class History_List_Fragment  extends ListFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
     private List<Truyen> lisTruyen=null;
-    private DanhMuc danhMuc=null;
     Truyen_List_Custom_Adapter truyen_list_custom_adapter;
     SearchView searchView;
-    @Override
+
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.truyen_danhsach_fragment,container,false);
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        Bundle bundle=this.getArguments();
-        danhMuc= (DanhMuc)bundle.getSerializable("selectedDanhMuc");
-        Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
+        View view = inflater.inflate(R.layout.history_list_fragment,container,false);
         lisTruyen=new ArrayList<>();
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    Truyen truyen= new Truyen(ds.child("_id").getValue(String.class),
-                            ds.child("tieuDe").getValue(String.class),
-                            ds.child("danhMuc").getValue(String.class),
-                            ds.child("tacGia").getValue(String.class),
-                            ds.child("noiDung").getValue(String.class),
-                            ds.child("ngayTao").getValue(String.class));
-                    lisTruyen.add(truyen);
-                    truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter, lisTruyen);
-                    setListAdapter(truyen_list_custom_adapter);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        MyDatabaseHelper databaseHelper=new MyDatabaseHelper(getContext());
+        Truyen truyen=new Truyen("1","1","1","1","1","1","1");
+//        long d = databaseHelper.addStory(truyen);
+//        if (d > 0) {
+//            Toast.makeText(getContext(), "Thêm thành công !!", Toast.LENGTH_SHORT).show();
+//        }
+//        else{
+//            Toast.makeText(getContext(), "Đã tồn tại trong danh sách !!", Toast.LENGTH_SHORT).show();
+//        }
+//        databaseHelper.deleteStory(truyen.get_id());
+        List<Truyen> list=databaseHelper.getAllStory();
+        lisTruyen.addAll(list);
 
-            }
-        });
+        truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter,lisTruyen);
 
-        TextView txtTenDanhMuc=(TextView)view.findViewById(R.id.txtTenDanhMuc);
-        txtTenDanhMuc.setText(danhMuc.getTenDanhMuc());
+        setListAdapter(truyen_list_custom_adapter);
         return view;
     }
 
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Truyen tr = lisTruyen.get(position);
         Intent intent = new Intent(getActivity(), ChiTietTruyenActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("selectedTruyen",tr);
-        bundle.putString("activityTruoc","DSTruyen");
+        bundle.putString("activityTruoc","DSBookmark");
         intent.putExtra("dataTruyen",bundle);
         startActivity(intent);
     }
 
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        inflater.inflate(R.menu.menu_list_truyen,menu);
+        inflater.inflate(R.menu.menu_history,menu);
         MenuItem searchItem=menu.findItem(R.id.action_search);
         searchView= (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
@@ -102,41 +79,37 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
     public boolean onMenuItemActionExpand(MenuItem item) {
         return true;
     }
 
-    @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         return true;
     }
 
-    @Override
     public boolean onQueryTextSubmit(String query) {
         searchView.clearFocus();
         return false;
     }
 
-    @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d("LOGGGG",newText);
         if(newText==null || newText.trim().isEmpty()){
             resetSearch();
             return false;
         }
-        ArrayList<Truyen> filterListTruyen = new ArrayList<Truyen>(lisTruyen);
+        ArrayList<Truyen> filterList = new ArrayList<Truyen>(lisTruyen);
         for(Truyen tr : lisTruyen){
             if(!tr.getTieuDe().trim().toLowerCase().contains(newText.toLowerCase().trim())){
-                filterListTruyen.remove(tr);
+                filterList.remove(tr);
             }
         }
-        truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,filterListTruyen);
+        truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,filterList);
         setListAdapter(truyen_list_custom_adapter);
-        return false;
+        return true;
     }
     public  void  resetSearch(){
         truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,lisTruyen);
-        setListAdapter(truyen_list_custom_adapter);
+        truyen_list_custom_adapter.notifyDataSetChanged();
+        this.setListAdapter(truyen_list_custom_adapter);
     }
 }

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,15 +29,18 @@ import iuh.edu.vn.navigationdrawertest1.custom_adapter.Truyen_List_Custom_Adapte
 import iuh.edu.vn.navigationdrawertest1.fragment.ChiTietTruyen_Fragment;
 import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
+import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
 public class ChiTietTruyenActivity extends AppCompatActivity {
     private Truyen truyen;
+    private String activityTruoc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chi_tiet_truyen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        MyDatabaseHelper databaseHelper=new MyDatabaseHelper(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -45,9 +49,11 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("dataTruyen");
         truyen = (Truyen) bundle.getSerializable("selectedTruyen");
-
+        activityTruoc = bundle.getString("activityTruoc");
         actionBar.setTitle(truyen.getTieuDe());
-
+        truyen.setDanhDau("inHistory");
+        Toast.makeText(this, truyen.getDanhDau(), Toast.LENGTH_SHORT).show();
+        long d = databaseHelper.addStory(truyen); // Thêm vào lịch sử
         ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
         cttr.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.frag_chitiet,cttr).commit();
@@ -69,29 +75,34 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         SeekBar seekBar = frag.getActivity().findViewById(R.id.seekBarSize);
         switch (item.getItemId()){
             case android.R.id.home: //nút back trở lại
-                final Intent intent1 = new Intent(this,DanhSachTruyenActivity.class);
-                final Bundle bundle1 = new Bundle();
-                final ArrayList<DanhMuc> arrDm= new ArrayList<>();
-                Query query = rootRef.child("allCategory").orderByChild("_id").equalTo(truyen.getDanhMuc());
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                switch (activityTruoc){
+                    case "DSTruyen":
+                        final Intent intent1 = new Intent(this,DanhSachTruyenActivity.class);
+                        final Bundle bundle1 = new Bundle();
+                        final ArrayList<DanhMuc> arrDm= new ArrayList<>();
+                        Query query = rootRef.child("allCategory").orderByChild("_id").equalTo(truyen.getDanhMuc());
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        for(DataSnapshot ds: dataSnapshot.getChildren()){
-                            DanhMuc danhMuc =new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class) );
-                            arrDm.add(danhMuc);
-                        }
-                        bundle1.putSerializable("selectedDanhMuc",arrDm.get(0));
-                        intent1.putExtra("dataDanhMuc",bundle1);
-                        startActivity(intent1);
-                        finish();
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
-
-                return true;
+                                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                    DanhMuc danhMuc =new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class) );
+                                    arrDm.add(danhMuc);
+                                }
+                                bundle1.putSerializable("selectedDanhMuc",arrDm.get(0));
+                                intent1.putExtra("dataDanhMuc",bundle1);
+                                startActivity(intent1);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                        return true;
+                    case "DSBookmark":
+                        Intent i = new Intent(this,HistoryActivity.class);
+                        startActivity(i);
+                        return true;
+                }
             case R.id.light:
                 frag.getView().setBackgroundColor(Color.WHITE);
                 tv.setTextColor(Color.BLACK);
