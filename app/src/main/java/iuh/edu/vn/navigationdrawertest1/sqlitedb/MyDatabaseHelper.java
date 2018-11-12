@@ -130,7 +130,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         ArrayList<String> check = new ArrayList<String>();
         String sql = "SELECT * FROM FirstTimeStory WHERE linkTruyen is '"+link+"'";
         Cursor cursor = writedb.rawQuery(sql,null);
-
         if(cursor.moveToFirst()){
             do{
                 String tr = cursor.getString(0);

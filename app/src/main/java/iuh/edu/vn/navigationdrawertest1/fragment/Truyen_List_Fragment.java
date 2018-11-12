@@ -41,7 +41,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
     private DanhMuc danhMuc=null;
     Truyen_List_Custom_Adapter truyen_list_custom_adapter;
     SearchView searchView;
-
+    public static final int SOTRUYEN = 10;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,6 +147,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
     public void phanTrangList(final List<Truyen> listTruyen){
         final Button previous,next,first,last;
         final TextView recur,max;
+
         max = getActivity().findViewById(R.id.maxTR);
         recur = getActivity().findViewById(R.id.recurTR);
         previous = getActivity().findViewById(R.id.previousTR);
@@ -154,18 +155,18 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
         first = getActivity().findViewById(R.id.firstTR);
         last = getActivity().findViewById(R.id.lastTR);
         int size = listTruyen.size();
-        int imax = size/5;
-        if( size % 5 !=0 || imax==0)
+        int imax = size/SOTRUYEN;
+        if( size % SOTRUYEN !=0 || imax==0)
             imax+=1;
         max.setText(imax+"");
         recur.setText(1+"");
         final ArrayList<Truyen> firstList = new ArrayList<Truyen>();
-        if(listTruyen.size()<=5){
+        if(listTruyen.size()<=SOTRUYEN){
             for(int i=0;i<listTruyen.size();i++){
                 firstList.add(listTruyen.get(i));
             }
         }else{
-            for(int i=0;i<5;i++){
+            for(int i=0;i<SOTRUYEN;i++){
                 firstList.add(listTruyen.get(i));
             }
         }
@@ -180,7 +181,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 irecur = irecur-1;
                 recur.setText(irecur+"");
                 ArrayList<Truyen> phanList = new ArrayList<Truyen>();
-                for(int i=irecur*5 -5;i<irecur*5;i++){
+                for(int i=irecur*SOTRUYEN -SOTRUYEN;i<irecur*SOTRUYEN;i++){
                     phanList.add(listTruyen.get(i));
                 }
                 truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
@@ -197,11 +198,11 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 recur.setText(irecur+"");
                 ArrayList<Truyen> phanList = new ArrayList<Truyen>();
                 if(irecur==imax){
-                    for(int i=irecur*5 -5;i<listTruyen.size();i++){
+                    for(int i=irecur*SOTRUYEN -SOTRUYEN;i<listTruyen.size();i++){
                         phanList.add(listTruyen.get(i));
                     }
                 }else{
-                    for(int i=irecur*5-5;i<irecur*5;i++){
+                    for(int i=irecur*SOTRUYEN-SOTRUYEN;i<irecur*SOTRUYEN;i++){
                         phanList.add(listTruyen.get(i));
                     }
                 }
@@ -215,12 +216,12 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
             @Override
             public void onClick(View v) {
                 ArrayList<Truyen> firstListClick = new ArrayList<Truyen>();
-                if(listTruyen.size()<=5){
+                if(listTruyen.size()<=SOTRUYEN){
                     for(int i=0;i<listTruyen.size();i++){
                         firstListClick.add(listTruyen.get(i));
                     }
                 }else{
-                    for(int i=0;i<5;i++){
+                    for(int i=0;i<SOTRUYEN;i++){
                         firstListClick.add(listTruyen.get(i));
                     }
                 }
@@ -236,7 +237,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 int imax = Integer.parseInt(max.getText()+"");
                 recur.setText(imax+"");
                 ArrayList<Truyen> phanList = new ArrayList<Truyen>();
-                for(int i=imax*5 -5;i<listTruyen.size();i++){
+                for(int i=imax*SOTRUYEN -SOTRUYEN;i<listTruyen.size();i++){
                     phanList.add(listTruyen.get(i));
                 }
                 truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
