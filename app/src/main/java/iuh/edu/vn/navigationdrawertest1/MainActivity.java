@@ -89,13 +89,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
             Toast.makeText(MainActivity.this, "Giới thiệu", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_bookmark) {
-            Toast.makeText(MainActivity.this, "Bookmart", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(MainActivity.this,BookmarkActivity.class);
             startActivity(i);
             return true;
         }else if (id == R.id.nav_history) {
-            Toast.makeText(MainActivity.this, "Lịch sử", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(MainActivity.this,HistoryActivity.class);
+            startActivity(i);
+            return  true;
+        }
+        else if (id == R.id.nav_downloaded) {
+            Intent i = new Intent(MainActivity.this,DownloadActivity.class);
             startActivity(i);
             return  true;
         }

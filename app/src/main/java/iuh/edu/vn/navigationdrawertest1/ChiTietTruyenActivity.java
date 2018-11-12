@@ -1,15 +1,20 @@
 package iuh.edu.vn.navigationdrawertest1;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,13 +23,24 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +55,8 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
     Menu mMenu;
     private static final String HISTORY_TABLE="HistoryTB";
     private static final String BOOKMARK_TABLE="BookmarkTB";
-
+    private static final int REQUEST_ID_READ_PERMISSION = 100;
+    private static final int REQUEST_ID_WRITE_PERMISSION = 200;
     private String activityTruoc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +76,9 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         activityTruoc = bundle.getString("activityTruoc");
         actionBar.setTitle(truyen.getTieuDe());
 
-
-
-
-        long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
+        if(activityTruoc.equalsIgnoreCase("DSTruyen")){
+            long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
+        }
 //        Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
         ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
         cttr.setArguments(bundle);
@@ -85,16 +101,17 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         if(databaseHelper.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
             item.setIcon(R.drawable.ic_added_bookmark);
         }
-        return true;
+       return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.frag_chitiet);
-        TextView tv = frag.getActivity().findViewById(R.id.noiDung);
+        final TextView tv = frag.getActivity().findViewById(R.id.noiDung);
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
         //SQ LITE
-        MyDatabaseHelper db=new MyDatabaseHelper(this);
+        final MyDatabaseHelper db=new MyDatabaseHelper(this);
         SeekBar seekBar = frag.getActivity().findViewById(R.id.seekBarSize);
         switch (item.getItemId()){
             case android.R.id.home: //nút back trở lại
@@ -130,6 +147,10 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                         Intent a = new Intent(this,BookmarkActivity.class);
                         startActivity(a);
                         return true;
+                    case "DSDownloaded":
+                        Intent a2 = new Intent(this,DownloadActivity.class);
+                        startActivity(a2);
+                        return true;
                 }
             case R.id.light:
                 frag.getView().setBackgroundColor(Color.WHITE);
@@ -145,6 +166,51 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                 return true;
             case R.id.optionSize:
                 seekBar.setVisibility(View.VISIBLE);
+                return true;
+            case R.id.action_download:
+                StorageReference riversRef = mStorageRef.child("truyen/test.txt");
+            final long ONE_MEGABYTE = 1024 * 1024;
+            riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
+                    StringBuffer stringBuffer = new StringBuffer();
+                    String data = "";
+                    if(bis!=null) {
+                        try {
+                            while ((data = reader.readLine()) != null) {
+                                stringBuffer.append("\t" + data + "\n");
+                            }
+                            askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                            String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
+                            truyen.setNoiDung(linkTruyen);
+                            long check = db.addStory(truyen,"DownloadedTB");
+                            Toast.makeText(ChiTietTruyenActivity.this, check+"", Toast.LENGTH_SHORT).show();
+                            String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
+                            File dir = new File(path);
+                            if (!dir.exists()) {
+                                dir.mkdirs();
+                            }
+                            File newFile = new File(path+"/"+truyen.get_id()+".txt");
+                            Log.d("MYID:",truyen.get_id());
+                            FileOutputStream fos = new FileOutputStream(newFile);
+                            OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
+                            myOutWriter.append(stringBuffer);
+                            myOutWriter.close();
+                            fos.close();
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    tv.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
+                }
+            });
                 return true;
             case R.id.addToBookMark:
                 MenuItem item1 = mMenu.findItem(R.id.addToBookMark);
@@ -163,5 +229,23 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private boolean askPermission(int requestId, String permissionName) {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+
+            // Check if we have permission
+            int permission = ActivityCompat.checkSelfPermission(this, permissionName);
+
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // If don't have permission so prompt the user.
+                this.requestPermissions(
+                        new String[]{permissionName},
+                        requestId
+                );
+                return false;
+            }
+        }
+        return true;
     }
 }

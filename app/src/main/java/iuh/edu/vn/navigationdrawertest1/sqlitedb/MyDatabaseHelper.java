@@ -46,7 +46,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_DANHMUC + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_NOIDUNG + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NGAYTAO + " NVARCHAR(100) )";
-        String script3 = "CREATE TABLE FirstTimeStory ( linkTruyen NVARCHAR(10000) PRIMARY KEY NOT NULL )";
+        String script3="CREATE TABLE " + "DownloadedTB" +
+                " (" + COLUMN_ID +" NVARCHAR(50) PRIMARY KEY NOT NULL , "
+                + COLUMN_TIEUDE + " NVARCHAR(200) NOT NULL ,"
+                + COLUMN_TACGIA + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_DANHMUC + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_NOIDUNG + " NVARCHAR(10000) NOT NULL ,"
+                + COLUMN_NGAYTAO + " NVARCHAR(100) )";
         db.execSQL(script);
         db.execSQL(script2);
         db.execSQL(script3);
@@ -56,7 +62,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + "HistoryTB");
         db.execSQL("DROP TABLE IF EXISTS " + "BookmarkTB");
-        db.execSQL("DROP TABLE IF EXISTS " + "FirstTimeStory");
+        db.execSQL("DROP TABLE IF EXISTS " + "DownloadedTB");
         onCreate(db);
     }
 
@@ -125,6 +131,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         database.delete(table, COLUMN_ID + "=?", new String[] {id});
         database.close();
     }
+
     public boolean firstTimeLamChuyenAy(String link){
         SQLiteDatabase writedb = this.getWritableDatabase();
         ArrayList<String> check = new ArrayList<String>();

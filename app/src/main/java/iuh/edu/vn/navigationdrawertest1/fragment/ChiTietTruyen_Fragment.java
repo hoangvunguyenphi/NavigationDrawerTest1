@@ -12,6 +12,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
@@ -51,10 +52,13 @@ public class ChiTietTruyen_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
+
         Bundle bundle = this.getArguments();
         MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
         final Truyen truyen= (Truyen)bundle.getSerializable("selectedTruyen");
         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        //Thannh chỉnh size chữ
         noiDung = view.findViewById(R.id.noiDung);
         seekBar = view.findViewById(R.id.seekBarSize);
         seekBar.setVisibility(View.GONE);
@@ -62,12 +66,10 @@ public class ChiTietTruyen_Fragment extends Fragment {
         noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
         noiDung.setTextColor(Color.BLACK);
         noiDung.setMovementMethod(new ScrollingMovementMethod());
-        String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
-        boolean isFirstTime = helper.firstTimeLamChuyenAy(linkTruyen);
-        if(isFirstTime==true){
-            // đường dẫn đến storage firebase folder/file.txt
-            //StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
-            StorageReference riversRef = mStorageRef.child("truyen/test.txt");
+
+        //Kiểm tra coi từ activityDownload sang hay từ DsTruyen (loadonline) sang
+        if(bundle.getString("activityTruoc").equalsIgnoreCase("DSTruyen") || bundle.getString("activityTruoc").equalsIgnoreCase("DSBookmark") ||bundle.getString("activityTruoc").equalsIgnoreCase("DSHistory")){
+            StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
             final long ONE_MEGABYTE = 1024 * 1024;
             riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
@@ -82,19 +84,6 @@ public class ChiTietTruyen_Fragment extends Fragment {
                                 stringBuffer.append("\t" + data + "\n");
                             }
                             noiDung.setText(stringBuffer);
-                            askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                            String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
-                            File dir = new File(path);
-                            if (!dir.exists()) {
-                                dir.mkdirs();
-                            }
-                            File newFile = new File(path+"/"+truyen.get_id()+".txt");
-                            Log.d("MYID:",truyen.get_id());
-                            FileOutputStream fos = new FileOutputStream(newFile);
-                            OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
-                            myOutWriter.append(stringBuffer);
-                            myOutWriter.close();
-                            fos.close();
                             bis.close();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -107,12 +96,13 @@ public class ChiTietTruyen_Fragment extends Fragment {
                     noiDung.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
                 }
             });
-        }else{
+        }
+        else if(bundle.getString("activityTruoc").equalsIgnoreCase("DSDownloaded")){
             askPermission(REQUEST_ID_READ_PERMISSION,Manifest.permission.READ_EXTERNAL_STORAGE);
             String s = "";
             String fileContent = "";
             try {
-                File myFile = new File(linkTruyen);
+                File myFile = new File(truyen.getNoiDung());
                 FileInputStream fIn = new FileInputStream(myFile);
                 BufferedReader myReader = new BufferedReader(
                         new InputStreamReader(fIn));
@@ -127,6 +117,20 @@ public class ChiTietTruyen_Fragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
+
+//        String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
+//        long check = helper.addStory(truyen,"DownloadedTB");
+//
+//        boolean isFirstTime = helper.firstTimeLamChuyenAy(linkTruyen);
+//        if(isFirstTime==true){
+//            // đường dẫn đến storage firebase folder/file.txt
+//            //StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
+//
+//        }else{
+//
+
+        //Xử lý event thanh chinh size
         noiDung.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,7 +157,11 @@ public class ChiTietTruyen_Fragment extends Fragment {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
 
+    }
 
     private boolean askPermission(int requestId, String permissionName) {
         if (android.os.Build.VERSION.SDK_INT >= 23) {

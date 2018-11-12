@@ -12,15 +12,19 @@
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_menu_search"
             android:title="Tìm kiếm" />
+        <item
+            android:id="@+id/nav_bookmark"
+            android:icon="@drawable/ic_menu_bookmark"
+            android:title="Bookmark" />
+        <item
+            android:id="@+id/nav_downloaded"
+            android:icon="@drawable/ic_menu_downloaded"
+            android:title="Lưu xuống offline" />
 
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_history"
             android:title="Lịch sử" />
-        <item
-            android:id="@+id/nav_bookmark"
-            android:icon="@drawable/ic_menu_bookmark"
-            android:title="Bookmark" />
         <item
             android:id="@+id/nav_exit"
             android:icon="@drawable/ic_menu_exit"

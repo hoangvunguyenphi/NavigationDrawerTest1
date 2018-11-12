@@ -6,6 +6,11 @@
         android:title="Thêm vào bookmark"
         app:showAsAction="always">
     </item>
+    <item android:id="@+id/action_download"
+        android:icon="@drawable/ic_menu_downloaded"
+        android:title="Tải xuống"
+        app:showAsAction="never">
+    </item>
     <item
         android:id="@+id/light"
         android:title="Màn hình sáng"
