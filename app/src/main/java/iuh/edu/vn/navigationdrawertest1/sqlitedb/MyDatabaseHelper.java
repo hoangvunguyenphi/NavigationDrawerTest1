@@ -15,7 +15,7 @@ import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION=3;
+    private static final int DATABASE_VERSION=4;
     private static final String DATABASE_NAME="SQLITE_DB";
     private static final String COLUMN_ID="_id";
     private static final String COLUMN_TIEUDE="tieuDe";
