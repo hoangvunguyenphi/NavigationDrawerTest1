@@ -33,6 +33,9 @@ import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
 public class ChiTietTruyenActivity extends AppCompatActivity {
     private Truyen truyen;
+    private static final String HISTORY_TABLE="HistoryTB";
+    private static final String BOOKMARK_TABLE="BookmarkTB";
+
     private String activityTruoc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +54,9 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         truyen = (Truyen) bundle.getSerializable("selectedTruyen");
         activityTruoc = bundle.getString("activityTruoc");
         actionBar.setTitle(truyen.getTieuDe());
-        truyen.setDanhDau("inHistory");
-        Toast.makeText(this, truyen.getDanhDau(), Toast.LENGTH_SHORT).show();
-        long d = databaseHelper.addStory(truyen); // Thêm vào lịch sử
+
+        long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
+        Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
         ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
         cttr.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.frag_chitiet,cttr).commit();
@@ -71,7 +74,8 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.frag_chitiet);
         TextView tv = frag.getActivity().findViewById(R.id.noiDung);
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-
+        //SQ LITE
+        MyDatabaseHelper db=new MyDatabaseHelper(this);
         SeekBar seekBar = frag.getActivity().findViewById(R.id.seekBarSize);
         switch (item.getItemId()){
             case android.R.id.home: //nút back trở lại
@@ -98,9 +102,14 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                             }
                         });
                         return true;
-                    case "DSBookmark":
+                    case "DSHistory":
                         Intent i = new Intent(this,HistoryActivity.class);
                         startActivity(i);
+                        return true;
+
+                    case "DSBookmark":
+                        Intent a = new Intent(this,BookmarkActivity.class);
+                        startActivity(a);
                         return true;
                 }
             case R.id.light:
@@ -117,6 +126,15 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                 return true;
             case R.id.optionSize:
                 seekBar.setVisibility(View.VISIBLE);
+                return true;
+            case R.id.addToBookMark:
+                long d = db.addStory(truyen,BOOKMARK_TABLE);
+                if(d>0){
+                    Toast.makeText(this, "Đã thêm vào bookmark!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(this, "Đã tồn tại!", Toast.LENGTH_SHORT).show();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

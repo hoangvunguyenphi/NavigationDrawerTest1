@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,22 +20,22 @@ import java.util.List;
 import iuh.edu.vn.navigationdrawertest1.ChiTietTruyenActivity;
 import iuh.edu.vn.navigationdrawertest1.R;
 import iuh.edu.vn.navigationdrawertest1.custom_adapter.Truyen_List_Custom_Adapter;
-import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
-public class History_List_Fragment  extends ListFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class Bookmark_List_Fragment  extends ListFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
     private List<Truyen> lisTruyen=null;
     Truyen_List_Custom_Adapter truyen_list_custom_adapter;
     SearchView searchView;
-    private static final String HISTORY_TABLE = "HistoryTB";
+    private static final String BOOKMARK_TABLE ="BookmarkTB";
+
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.history_list_fragment,container,false);
+        View view = inflater.inflate(R.layout.fragment_list_bookmark,container,false);
         lisTruyen=new ArrayList<>();
         MyDatabaseHelper databaseHelper=new MyDatabaseHelper(getContext());
 //        long d = databaseHelper.addStory(truyen);
@@ -47,10 +46,10 @@ public class History_List_Fragment  extends ListFragment implements SearchView.O
 //            Toast.makeText(getContext(), "Đã tồn tại trong danh sách !!", Toast.LENGTH_SHORT).show();
 //        }
 //        databaseHelper.deleteStory(truyen.get_id());
-        List<Truyen> list=databaseHelper.getAllStory(HISTORY_TABLE);
+        List<Truyen> list=databaseHelper.getAllStory(BOOKMARK_TABLE);
         lisTruyen.addAll(list);
+        Log.d("LOGGGGGGG",lisTruyen.toString());
         truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter,lisTruyen);
-
         setListAdapter(truyen_list_custom_adapter);
         return view;
     }
@@ -61,7 +60,7 @@ public class History_List_Fragment  extends ListFragment implements SearchView.O
         Intent intent = new Intent(getActivity(), ChiTietTruyenActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("selectedTruyen",tr);
-        bundle.putString("activityTruoc","DSHistory");
+        bundle.putString("activityTruoc","DSBookmark");
         intent.putExtra("dataTruyen",bundle);
         startActivity(intent);
     }
