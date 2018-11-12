@@ -183,6 +183,4 @@ public class ChiTietTruyen_Fragment extends Fragment {
     }
 
 
-
-
 }
