@@ -82,17 +82,22 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_search) {
             Toast.makeText(MainActivity.this, "Tìm kiếm", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_exit) {
-            Toast.makeText(MainActivity.this, "Thoát", Toast.LENGTH_SHORT).show();
+            finish();
+            return true;
         } else if (id == R.id.nav_setting) {
             Toast.makeText(MainActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_about) {
             Toast.makeText(MainActivity.this, "Giới thiệu", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_bookmark) {
             Toast.makeText(MainActivity.this, "Bookmart", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(MainActivity.this,BookmarkActivity.class);
+            startActivity(i);
+            return true;
         }else if (id == R.id.nav_history) {
             Toast.makeText(MainActivity.this, "Lịch sử", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(MainActivity.this,HistoryActivity.class);
             startActivity(i);
+            return  true;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -15,10 +15,19 @@ public class Truyen implements Serializable {
     private String tacGia;
     private String noiDung;
     private String ngayTao;
-    private String danhDau;
-
 
     public Truyen() {
+    }
+
+
+
+    public Truyen(String _id, String tieuDe, String danhMuc, String tacGia, String noiDung, String ngayTao) {
+        this._id = _id;
+        this.tieuDe = tieuDe;
+        this.danhMuc = danhMuc;
+        this.tacGia = tacGia;
+        this.noiDung = noiDung;
+        this.ngayTao = ngayTao;
     }
 
     @Override
@@ -30,36 +39,7 @@ public class Truyen implements Serializable {
                 ", tacGia='" + tacGia + '\'' +
                 ", noiDung='" + noiDung + '\'' +
                 ", ngayTao='" + ngayTao + '\'' +
-                ", danhDau='" + danhDau + '\'' +
                 '}';
-    }
-
-    public Truyen(String _id, String tieuDe, String danhMuc, String tacGia, String noiDung, String ngayTao) {
-        this._id = _id;
-        this.tieuDe = tieuDe;
-        this.danhMuc = danhMuc;
-        this.tacGia = tacGia;
-        this.noiDung = noiDung;
-        this.ngayTao = ngayTao;
-        this.danhDau = "";
-
-    }
-    public Truyen(String _id, String tieuDe, String danhMuc, String tacGia, String noiDung, String ngayTao, String danhDau) {
-        this._id = _id;
-        this.tieuDe = tieuDe;
-        this.danhMuc = danhMuc;
-        this.tacGia = tacGia;
-        this.noiDung = noiDung;
-        this.ngayTao = ngayTao;
-        this.danhDau=danhDau;
-    }
-
-    public String getDanhDau() {
-        return danhDau;
-    }
-
-    public void setDanhDau(String danhDau) {
-        this.danhDau = danhDau;
     }
 
     public String get_id() {
