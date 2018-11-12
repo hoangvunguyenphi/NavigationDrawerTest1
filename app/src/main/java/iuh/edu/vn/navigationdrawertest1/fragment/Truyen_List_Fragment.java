@@ -12,9 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
     private DanhMuc danhMuc=null;
     Truyen_List_Custom_Adapter truyen_list_custom_adapter;
     SearchView searchView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +50,13 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.truyen_danhsach_fragment,container,false);
+        final View view = inflater.inflate(R.layout.truyen_danhsach_fragment,container,false);
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Bundle bundle=this.getArguments();
         danhMuc= (DanhMuc)bundle.getSerializable("selectedDanhMuc");
         Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
         lisTruyen=new ArrayList<>();
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -62,18 +68,17 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                             ds.child("noiDung").getValue(String.class),
                             ds.child("ngayTao").getValue(String.class));
                     lisTruyen.add(truyen);
-                    truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter, lisTruyen);
-                    setListAdapter(truyen_list_custom_adapter);
                 }
+                phanTrangList(lisTruyen);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
         TextView txtTenDanhMuc=(TextView)view.findViewById(R.id.txtTenDanhMuc);
         txtTenDanhMuc.setText(danhMuc.getTenDanhMuc());
+
         return view;
     }
 
@@ -131,13 +136,124 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 filterListTruyen.remove(tr);
             }
         }
-        truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,filterListTruyen);
-        setListAdapter(truyen_list_custom_adapter);
+        phanTrangList(filterListTruyen);
         return false;
     }
     public  void  resetSearch(){
         truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,lisTruyen);
         setListAdapter(truyen_list_custom_adapter);
+    }
+
+    public void phanTrangList(final List<Truyen> listTruyen){
+        final Button previous,next,first,last;
+        final TextView recur,max;
+        max = getActivity().findViewById(R.id.maxTR);
+        recur = getActivity().findViewById(R.id.recurTR);
+        previous = getActivity().findViewById(R.id.previousTR);
+        next = getActivity().findViewById(R.id.nextTR);
+        first = getActivity().findViewById(R.id.firstTR);
+        last = getActivity().findViewById(R.id.lastTR);
+        int size = listTruyen.size();
+        int imax = size/5;
+        if( size % 5 !=0 || imax==0)
+            imax+=1;
+        max.setText(imax+"");
+        recur.setText(1+"");
+        final ArrayList<Truyen> firstList = new ArrayList<Truyen>();
+        if(listTruyen.size()<=5){
+            for(int i=0;i<listTruyen.size();i++){
+                firstList.add(listTruyen.get(i));
+            }
+        }else{
+            for(int i=0;i<5;i++){
+                firstList.add(listTruyen.get(i));
+            }
+        }
+        truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter, firstList);
+        setListAdapter(truyen_list_custom_adapter);
+        checkTrang(1,imax,next,previous);
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int irecur = Integer.parseInt(recur.getText()+"");
+                int imax = Integer.parseInt(max.getText()+"");
+                irecur = irecur-1;
+                recur.setText(irecur+"");
+                ArrayList<Truyen> phanList = new ArrayList<Truyen>();
+                for(int i=irecur*5 -5;i<irecur*5;i++){
+                    phanList.add(listTruyen.get(i));
+                }
+                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
+                setListAdapter(truyen_list_custom_adapter);
+                checkTrang(irecur,imax,next,previous);
+            }
+        });
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int irecur = Integer.parseInt(recur.getText()+"");
+                int imax = Integer.parseInt(max.getText()+"");
+                irecur = irecur+1;
+                recur.setText(irecur+"");
+                ArrayList<Truyen> phanList = new ArrayList<Truyen>();
+                if(irecur==imax){
+                    for(int i=irecur*5 -5;i<listTruyen.size();i++){
+                        phanList.add(listTruyen.get(i));
+                    }
+                }else{
+                    for(int i=irecur*5-5;i<irecur*5;i++){
+                        phanList.add(listTruyen.get(i));
+                    }
+                }
+                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
+                setListAdapter(truyen_list_custom_adapter);
+                checkTrang(irecur,imax,next,previous);
+            }
+        });
+        final int finalImax = imax;
+        first.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Truyen> firstListClick = new ArrayList<Truyen>();
+                if(listTruyen.size()<=5){
+                    for(int i=0;i<listTruyen.size();i++){
+                        firstListClick.add(listTruyen.get(i));
+                    }
+                }else{
+                    for(int i=0;i<5;i++){
+                        firstListClick.add(listTruyen.get(i));
+                    }
+                }
+                recur.setText(1+"");
+                truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter, firstListClick);
+                setListAdapter(truyen_list_custom_adapter);
+                checkTrang(1, finalImax,next,previous);
+            }
+        });
+        last.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int imax = Integer.parseInt(max.getText()+"");
+                recur.setText(imax+"");
+                ArrayList<Truyen> phanList = new ArrayList<Truyen>();
+                for(int i=imax*5 -5;i<listTruyen.size();i++){
+                    phanList.add(listTruyen.get(i));
+                }
+                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
+                setListAdapter(truyen_list_custom_adapter);
+                checkTrang(imax,imax,next,previous);
+            }
+        });
+    }
+    public void checkTrang(int recur, int max, Button next, Button previous){
+        if(recur==max)
+            next.setEnabled(false);
+        else
+            next.setEnabled(true);
+        if(recur==1)
+            previous.setEnabled(false);
+        else
+            previous.setEnabled(true);
     }
 }
 

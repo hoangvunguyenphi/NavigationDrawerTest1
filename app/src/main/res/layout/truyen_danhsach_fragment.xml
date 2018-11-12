@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent" android:orientation="vertical">
+
     <TextView
         android:id="@+id/txtTenDanhMuc"
         android:text="Chủ đề: Truyện ngắn"
@@ -12,9 +13,79 @@
         android:background="@android:color/darker_gray"
         android:layout_width="match_parent"
         android:layout_height="40dp" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="463dp">
+
     </ListView>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:background="?attr/colorPrimary"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="7">
+
+            <Button
+                android:id="@+id/firstTR"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="&lt;&lt;" />
+
+            <Button
+                android:id="@+id/previousTR"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="&lt;" />
+
+            <TextView
+                android:id="@+id/recurTR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="/" />
+
+            <TextView
+                android:id="@+id/maxTR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:text="" />
+
+            <Button
+                android:id="@+id/nextTR"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="&gt;" />
+
+            <Button
+                android:id="@+id/lastTR"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="&gt;&gt;" />
+        </LinearLayout>
+
+    </android.support.design.widget.BottomNavigationView>
+
 </LinearLayout>

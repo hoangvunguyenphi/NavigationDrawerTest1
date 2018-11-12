@@ -63,7 +63,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
 
 
         long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
-        Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
         ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
         cttr.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.frag_chitiet,cttr).commit();
