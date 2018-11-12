@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +38,7 @@ import java.io.OutputStreamWriter;
 
 import iuh.edu.vn.navigationdrawertest1.R;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
+import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
 
 public class ChiTietTruyen_Fragment extends Fragment {
@@ -52,6 +52,7 @@ public class ChiTietTruyen_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
         Bundle bundle = this.getArguments();
+        MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
         final Truyen truyen= (Truyen)bundle.getSerializable("selectedTruyen");
         mStorageRef = FirebaseStorage.getInstance().getReference();
         noiDung = view.findViewById(R.id.noiDung);
@@ -61,76 +62,71 @@ public class ChiTietTruyen_Fragment extends Fragment {
         noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
         noiDung.setTextColor(Color.BLACK);
         noiDung.setMovementMethod(new ScrollingMovementMethod());
-        askPermission(REQUEST_ID_READ_PERMISSION,Manifest.permission.READ_EXTERNAL_STORAGE);
-        askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        File extStore = Environment.getExternalStorageDirectory();
-        // ==> /storage/emulated/0/note.txt
-        String path = extStore.getAbsolutePath() + "/truyen/" + "book20.txt";
-        Log.i("ExternalStorageDemo", "Read file: " + path);
-
-        String s = "";
-        String fileContent = "";
-        try {
-            File myFile = new File(path);
-            FileInputStream fIn = new FileInputStream(myFile);
-            BufferedReader myReader = new BufferedReader(
-                    new InputStreamReader(fIn));
-
-            while ((s = myReader.readLine()) != null) {
-                fileContent += s +"\n";
-            }
-            myReader.close();
-
-            noiDung.setText(fileContent);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // đường dẫn đến storage firebase folder/file.txt
-        //StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
-        StorageReference riversRef = mStorageRef.child("truyen/test.txt");
-
-
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-
-                ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
-                StringBuffer stringBuffer = new StringBuffer();
-                String data = "";
-                if(bis!=null) {
-                    try {
-                        while ((data = reader.readLine()) != null) {
-                            stringBuffer.append("\t" + data + "\n");
+        String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
+        boolean isFirstTime = helper.firstTimeLamChuyenAy(linkTruyen);
+        if(isFirstTime==true){
+            // đường dẫn đến storage firebase folder/file.txt
+            //StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
+            StorageReference riversRef = mStorageRef.child("truyen/test.txt");
+            final long ONE_MEGABYTE = 1024 * 1024;
+            riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
+                    StringBuffer stringBuffer = new StringBuffer();
+                    String data = "";
+                    if(bis!=null) {
+                        try {
+                            while ((data = reader.readLine()) != null) {
+                                stringBuffer.append("\t" + data + "\n");
+                            }
+                            noiDung.setText(stringBuffer);
+                            askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                            String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
+                            File dir = new File(path);
+                            if (!dir.exists()) {
+                                dir.mkdirs();
+                            }
+                            File newFile = new File(path+"/"+truyen.get_id()+".txt");
+                            Log.d("MYID:",truyen.get_id());
+                            FileOutputStream fos = new FileOutputStream(newFile);
+                            OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
+                            myOutWriter.append(stringBuffer);
+                            myOutWriter.close();
+                            fos.close();
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        noiDung.setText(stringBuffer);
-                        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
-                        File dir = new File(path);
-                        if (!dir.exists()) {
-                            dir.mkdirs();
-                        }
-                        File newFile = new File(path+"/"+truyen.get_id()+".txt");
-                        Log.d("MYID:",truyen.get_id());
-                        FileOutputStream fos = new FileOutputStream(newFile);
-                        OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
-                        myOutWriter.append("Chạy ngon rồi đó hehehe");
-                        myOutWriter.close();
-                        fos.close();
-                        bis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    noiDung.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
+                }
+            });
+        }else{
+            askPermission(REQUEST_ID_READ_PERMISSION,Manifest.permission.READ_EXTERNAL_STORAGE);
+            String s = "";
+            String fileContent = "";
+            try {
+                File myFile = new File(linkTruyen);
+                FileInputStream fIn = new FileInputStream(myFile);
+                BufferedReader myReader = new BufferedReader(
+                        new InputStreamReader(fIn));
+
+                while ((s = myReader.readLine()) != null) {
+                    fileContent += s +"\n";
+                }
+                myReader.close();
+
+                noiDung.setText(fileContent);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                noiDung.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
-            }
-        });
+        }
         noiDung.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
