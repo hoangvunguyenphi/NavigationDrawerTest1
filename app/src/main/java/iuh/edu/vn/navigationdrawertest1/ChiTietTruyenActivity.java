@@ -2,13 +2,16 @@ package iuh.edu.vn.navigationdrawertest1;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
@@ -33,6 +36,7 @@ import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
 public class ChiTietTruyenActivity extends AppCompatActivity {
     private Truyen truyen;
+    Menu mMenu;
     private static final String HISTORY_TABLE="HistoryTB";
     private static final String BOOKMARK_TABLE="BookmarkTB";
 
@@ -55,6 +59,9 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         activityTruoc = bundle.getString("activityTruoc");
         actionBar.setTitle(truyen.getTieuDe());
 
+
+
+
         long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
         Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
         ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
@@ -66,6 +73,18 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_truyen,menu);
+        mMenu=menu;
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MyDatabaseHelper databaseHelper=new MyDatabaseHelper(this);
+        MenuItem item = mMenu.findItem(R.id.addToBookMark);
+        if(databaseHelper.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
+            item.setIcon(R.drawable.ic_added_bookmark);
+        }
         return true;
     }
 
@@ -128,12 +147,18 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                 seekBar.setVisibility(View.VISIBLE);
                 return true;
             case R.id.addToBookMark:
-                long d = db.addStory(truyen,BOOKMARK_TABLE);
-                if(d>0){
-                    Toast.makeText(this, "Đã thêm vào bookmark!", Toast.LENGTH_SHORT).show();
+                MenuItem item1 = mMenu.findItem(R.id.addToBookMark);
+                if(db.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
+                    db.deleteStory(truyen.get_id(),BOOKMARK_TABLE);
+                    item.setIcon(R.drawable.ic_menu_bookmark_null);
+                    Toast.makeText(this, "Đã xoá khỏi bookmark!", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(this, "Đã tồn tại!", Toast.LENGTH_SHORT).show();
+                    long d = db.addStory(truyen,BOOKMARK_TABLE);
+                    if(d>0){
+                        item.setIcon(R.drawable.ic_added_bookmark);
+                        Toast.makeText(this, "Đã thêm vào bookmark!", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 return true;
         }
