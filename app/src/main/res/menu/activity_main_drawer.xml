@@ -16,11 +16,11 @@
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_bookmark"
-            android:title="Bookmark" />
+            android:title="lịch sử" />
         <item
             android:id="@+id/nav_bookmark"
             android:icon="@drawable/ic_menu_history"
-            android:title="Lịch sử" />
+            android:title="bookmark" />
         <item
             android:id="@+id/nav_exit"
             android:icon="@drawable/ic_menu_exit"

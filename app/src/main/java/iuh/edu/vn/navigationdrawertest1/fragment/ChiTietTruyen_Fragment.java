@@ -34,7 +34,7 @@ public class ChiTietTruyen_Fragment extends Fragment {
         seekBar = view.findViewById(R.id.seekBarSize);
         seekBar.setVisibility(View.GONE);
         float maxSize = seekBar.getMax();
-        noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2)+10);
+        noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
         noiDung.setTextColor(Color.BLACK);
         noiDung.setMovementMethod(new ScrollingMovementMethod());
         noiDung.setText(truyen.getNoiDung());
