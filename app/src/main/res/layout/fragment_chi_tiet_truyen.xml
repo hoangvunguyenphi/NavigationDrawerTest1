@@ -12,7 +12,7 @@
         android:id="@+id/noiDung"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Noi dung truyen" />
+        android:text="Đang tải..." />
     <SeekBar
         android:id="@+id/seekBarSize"
         android:layout_width="match_parent"
