@@ -15,11 +15,12 @@ import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION=4;
+    private static final int DATABASE_VERSION=5;
     private static final String DATABASE_NAME="SQLITE_DB";
     private static final String COLUMN_ID="_id";
     private static final String COLUMN_TIEUDE="tieuDe";
     private static final String COLUMN_TACGIA="tacGia";
+    private static final String COLUMN_MOTA="moTa";
     private static final String COLUMN_NOIDUNG="noiDung";;
     private static final String COLUMN_NGAYTAO="ngayTao";
     private static final String COLUMN_DANHMUC="danhMuc";
@@ -35,6 +36,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_TIEUDE + " NVARCHAR(200) NOT NULL ,"
                 + COLUMN_TACGIA + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_DANHMUC + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_MOTA + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NOIDUNG + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NGAYTAO + " NVARCHAR(100) )";
         String script2="CREATE TABLE " + "BookmarkTB" +
@@ -42,6 +44,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_TIEUDE + " NVARCHAR(200) NOT NULL ,"
                 + COLUMN_TACGIA + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_DANHMUC + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_MOTA + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NOIDUNG + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NGAYTAO + " NVARCHAR(100) )";
         String script3="CREATE TABLE " + "DownloadedTB" +
@@ -49,6 +52,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_TIEUDE + " NVARCHAR(200) NOT NULL ,"
                 + COLUMN_TACGIA + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_DANHMUC + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_MOTA + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NOIDUNG + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NGAYTAO + " NVARCHAR(100) )";
         db.execSQL(script);
@@ -73,6 +77,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_TIEUDE,truyen.getTieuDe());
             values.put(COLUMN_TACGIA,truyen.getTacGia());
             values.put(COLUMN_DANHMUC,truyen.getDanhMuc());
+            values.put(COLUMN_MOTA,truyen.getMoTa());
             values.put(COLUMN_NOIDUNG,truyen.getNoiDung());
             values.put(COLUMN_NGAYTAO,truyen.getNgayTao());
             return db.insert(table,null,values);
@@ -89,6 +94,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TIEUDE,truyen.getTieuDe());
         values.put(COLUMN_TACGIA,truyen.getTacGia());
         values.put(COLUMN_DANHMUC,truyen.getDanhMuc());
+        values.put(COLUMN_MOTA,truyen.getMoTa());
         values.put(COLUMN_NOIDUNG,truyen.getNoiDung());
         values.put(COLUMN_NGAYTAO,truyen.getNgayTao());
         result=db.update(table,values,COLUMN_ID+"=?",new String[]{truyen.get_id()});
@@ -98,10 +104,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public Truyen getStory(String id,String table){
         SQLiteDatabase db=this.getReadableDatabase();
-        Cursor cursor=db.query(table, new String[]{COLUMN_ID,COLUMN_TIEUDE,COLUMN_DANHMUC,COLUMN_TACGIA,COLUMN_NOIDUNG,COLUMN_NGAYTAO},COLUMN_ID + "=?", new String[]{id},null,null,null,null);
+        Cursor cursor=db.query(table, new String[]{COLUMN_ID,COLUMN_TIEUDE,COLUMN_DANHMUC,COLUMN_TACGIA,COLUMN_MOTA,COLUMN_NOIDUNG,COLUMN_NGAYTAO},COLUMN_ID + "=?", new String[]{id},null,null,null,null);
         if(cursor.getCount()>0) {
             cursor.moveToFirst();
-            Truyen tr = new Truyen(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
+            Truyen tr = new Truyen(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(5), cursor.getString(6));
+            tr.setMoTa(cursor.getString(4));
             return tr;
         }
         else{
@@ -116,7 +123,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             do{
-                Truyen tr= new Truyen(cursor.getString(0),cursor.getString(1),cursor.getString(3),cursor.getString(2),cursor.getString(4),cursor.getString(5));
+                Truyen tr= new Truyen(cursor.getString(0),cursor.getString(1),cursor.getString(3),cursor.getString(2),cursor.getString(5),cursor.getString(6));
+                tr.setMoTa(cursor.getString(4));
                 listTruyen.add(tr);
             }while (cursor.moveToNext());
         }

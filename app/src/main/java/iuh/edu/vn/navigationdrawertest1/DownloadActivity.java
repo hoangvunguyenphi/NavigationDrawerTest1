@@ -1,16 +1,22 @@
 package iuh.edu.vn.navigationdrawertest1;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +28,7 @@ import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 
 public class DownloadActivity extends AppCompatActivity {
     private static final String DOWNLOADED_TABLE = "DownloadedTB";
-
+    private static final int REQUEST_ID_WRITE_PERMISSION = 200;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +52,22 @@ public class DownloadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_clear:
+
                 MyDatabaseHelper databaseHelper=new MyDatabaseHelper(this);
                 ArrayList<Truyen> listr = new ArrayList<>();
                 List<Truyen> list= databaseHelper.getAllStory(DOWNLOADED_TABLE);
                 listr.addAll(list);
+                askPermission(REQUEST_ID_WRITE_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
+                File dir = new File(path);
+                if (dir.isDirectory())
+                {
+                    String[] children = dir.list();
+                    for (int i = 0; i < children.length; i++)
+                    {
+                        new File(dir, children[i]).delete();
+                    }
+                }
                 if(listr.size()>0) {
                     for (Truyen tr : listr) {
 
@@ -66,5 +84,23 @@ public class DownloadActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private boolean askPermission(int requestId, String permissionName) {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+
+            // Check if we have permission
+            int permission = ActivityCompat.checkSelfPermission(this, permissionName);
+
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // If don't have permission so prompt the user.
+                this.requestPermissions(
+                        new String[]{permissionName},
+                        requestId
+                );
+                return false;
+            }
+        }
+        return true;
     }
 }

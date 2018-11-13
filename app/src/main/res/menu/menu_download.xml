@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_deleteDownloaded"
+        android:icon="@drawable/ic_menu_downloaded"
+        android:title="Xoá bỏ"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/light"
+        android:title="Màn hình sáng"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/yellow"
+        android:title="Màn hình vàng"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/dark"
+        android:title="Chế độ ban đêm"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/optionSize"
+        android:title="Tùy chỉnh cỡ chữ"
+        app:showAsAction="never"
+        />
+</menu>

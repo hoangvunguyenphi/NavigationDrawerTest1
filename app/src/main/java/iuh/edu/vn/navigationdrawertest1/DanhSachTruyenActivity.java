@@ -61,7 +61,18 @@ public class DanhSachTruyenActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case android.R.id.home:
+                startActivity(new Intent(this,MainActivity.class));
+                return true;
             case R.id.action_reload:
+                Intent intent=getIntent();
+                Bundle bundle=intent.getBundleExtra("dataDanhMuc");
+                DanhMuc danhMuc=(DanhMuc) bundle.getSerializable("selectedDanhMuc");
+                Bundle bundle1=new Bundle();
+                bundle1.putSerializable("selectedDanhMuc",danhMuc);
+                Truyen_List_Fragment truyen_list_fragment=new Truyen_List_Fragment();
+                truyen_list_fragment.setArguments(bundle1);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentListTruyen,truyen_list_fragment).commit();
                 return true;
         }
         return super.onOptionsItemSelected(item);

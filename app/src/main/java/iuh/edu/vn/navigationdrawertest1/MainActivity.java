@@ -1,6 +1,9 @@
 package iuh.edu.vn.navigationdrawertest1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import iuh.edu.vn.navigationdrawertest1.fragment.DanhMuc_List_Fragment;
 import iuh.edu.vn.navigationdrawertest1.fragment.History_List_Fragment;
 
 public class MainActivity extends AppCompatActivity
@@ -58,17 +62,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_reload) {
-            Toast.makeText(MainActivity.this, "Đã tải lại", Toast.LENGTH_SHORT).show();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_reload:
+                startActivity(new Intent(this,MainActivity.class));
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
     @SuppressWarnings("StatementWithEmptyBody")
@@ -80,7 +78,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             Toast.makeText(MainActivity.this, "Trang chủ", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_search) {
-            Toast.makeText(MainActivity.this, "Tìm kiếm", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this,SearchActivity.class));
+            return  true;
         } else if (id == R.id.nav_exit) {
             finish();
             return true;
@@ -89,17 +88,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
             Toast.makeText(MainActivity.this, "Giới thiệu", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_bookmark) {
-            Intent i = new Intent(MainActivity.this,BookmarkActivity.class);
-            startActivity(i);
+            startActivity(new Intent(MainActivity.this,BookmarkActivity.class));
             return true;
         }else if (id == R.id.nav_history) {
-            Intent i = new Intent(MainActivity.this,HistoryActivity.class);
-            startActivity(i);
+            startActivity(new Intent(MainActivity.this,HistoryActivity.class));
             return  true;
         }
         else if (id == R.id.nav_downloaded) {
-            Intent i = new Intent(MainActivity.this,DownloadActivity.class);
-            startActivity(i);
+            startActivity(new Intent(MainActivity.this,DownloadActivity.class));
             return  true;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

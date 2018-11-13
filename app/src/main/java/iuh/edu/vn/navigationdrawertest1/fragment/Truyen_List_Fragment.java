@@ -1,6 +1,9 @@
 package iuh.edu.vn.navigationdrawertest1.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,8 +40,8 @@ import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 public class Truyen_List_Fragment  extends ListFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-    private List<Truyen> lisTruyen=null;
-    private DanhMuc danhMuc=null;
+    private List<Truyen> lisTruyen;
+    private DanhMuc danhMuc;
     Truyen_List_Custom_Adapter truyen_list_custom_adapter;
     SearchView searchView;
     public static final int SOTRUYEN = 10;
@@ -51,37 +54,68 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.truyen_danhsach_fragment,container,false);
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Bundle bundle=this.getArguments();
         danhMuc= (DanhMuc)bundle.getSerializable("selectedDanhMuc");
-        Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
-        lisTruyen=new ArrayList<>();
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    Truyen truyen= new Truyen(ds.child("_id").getValue(String.class),
-                            ds.child("tieuDe").getValue(String.class),
-                            ds.child("danhMuc").getValue(String.class),
-                            ds.child("tacGia").getValue(String.class),
-                            ds.child("noiDung").getValue(String.class),
-                            ds.child("ngayTao").getValue(String.class));
-                    truyen.setMoTa(ds.child("moTa").getValue(String.class));
-                    lisTruyen.add(truyen);
-                }
-                phanTrangList(lisTruyen);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        if(isNetworkAvailable(getContext())){
+            lisTruyen=new ArrayList<>();
+            rootRef.child("allStory").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                Truyen truyen= new Truyen(ds.child("_id").getValue(String.class),
+                                        ds.child("tieuDe").getValue(String.class),
+                                        ds.child("danhMuc").getValue(String.class),
+                                        ds.child("tacGia").getValue(String.class),
+                                        ds.child("noiDung").getValue(String.class),
+                                        ds.child("ngayTao").getValue(String.class));
+                                truyen.setMoTa(ds.child("moTa").getValue(String.class));
+                                lisTruyen.add(truyen);
 
-            }
-        });
+                            }
+                            phanTrangList(lisTruyen);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else{
+            lisTruyen=new ArrayList<>();
+            Toast.makeText(getActivity(), "Lỗi : vui lòng kiểm tra kết nối internet!", Toast.LENGTH_LONG).show();
+        }
+
         TextView txtTenDanhMuc=(TextView)view.findViewById(R.id.txtTenDanhMuc);
         txtTenDanhMuc.setText(danhMuc.getTenDanhMuc());
 
         return view;
     }
 
+    public static boolean isNetworkAvailable(Context con) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) con
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.isConnected()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);

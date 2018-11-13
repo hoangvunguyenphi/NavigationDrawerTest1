@@ -2,8 +2,11 @@ package iuh.edu.vn.navigationdrawertest1.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,35 +44,43 @@ import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 public class DanhMuc_List_Fragment extends ListFragment {
-    private List<DanhMuc> danhMucList;
+    private List<DanhMuc> danhMucList = null;
     private ArrayList<DanhMuc> arrDanhMuc;
-    private DatabaseReference rootRef ;
+    private FirebaseDatabase rootRef=null;
     ProgressBar progressBar;
     DatabaseReference danhMucRef;
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view=inflater.inflate(R.layout.danhmuc_list_fragment,container,false);
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        danhMucRef=rootRef.child("allCategory");
-        danhMucRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                danhMucList=new ArrayList<>();
-                for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    DanhMuc dm=new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class) );
-                    danhMucList.add(dm);
+        rootRef=FirebaseDatabase.getInstance();
+        danhMucList = new ArrayList<>();
+        if(isNetworkAvailable(getContext())){
+            danhMucRef=rootRef.getReference().child("allCategory");
+            danhMucRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        DanhMuc dm = new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class));
+                        danhMucList.add(dm);
+                    }
+                    DanhMuc_Custom_Adapter danhMuc_custom_adapter = new DanhMuc_Custom_Adapter(getContext(),
+                            R.layout.danhmuc_custom_adapter, danhMucList);
+                    setListAdapter(danhMuc_custom_adapter);
                 }
-                DanhMuc_Custom_Adapter danhMuc_custom_adapter=new DanhMuc_Custom_Adapter(getContext(),
-                        R.layout.danhmuc_custom_adapter,danhMucList);
-                setListAdapter(danhMuc_custom_adapter);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w(getActivity().getClass().getSimpleName(),"Failed to read value.",databaseError.toException());
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            danhMucList.clear();
+            Toast.makeText(getActivity(), "Lỗi : vui lòng kiểm tra kết nối internet!", Toast.LENGTH_LONG).show();
+        }
+
         return view;
     }
+
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
@@ -80,21 +91,19 @@ public class DanhMuc_List_Fragment extends ListFragment {
         intent.putExtra("dataDanhMuc",bundle);
         startActivity(intent);
     }
+    public static boolean isNetworkAvailable(Context con) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) con
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 
-//
-//    public void filter(String charText){
-//        charText = charText.toLowerCase(Locale.getDefault());
-//        danhMucList.clear();
-//        if (charText.length()==0){
-//            danhMucList.addAll(arrDanhMuc);
-//        }
-//        else {
-//            for (DanhMuc dm : arrDanhMuc){
-//                if (dm.getTenDanhMuc().toLowerCase(Locale.getDefault())
-//                        .contains(charText)){
-//                    danhMucList.add(dm);
-//                }
-//            }
-//        }
-//    }
+            if (networkInfo != null && networkInfo.isConnected()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

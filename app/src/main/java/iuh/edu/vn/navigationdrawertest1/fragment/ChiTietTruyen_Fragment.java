@@ -117,19 +117,6 @@ public class ChiTietTruyen_Fragment extends Fragment {
                 e.printStackTrace();
             }
         }
-
-
-//        String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
-//        long check = helper.addStory(truyen,"DownloadedTB");
-//
-//        boolean isFirstTime = helper.firstTimeLamChuyenAy(linkTruyen);
-//        if(isFirstTime==true){
-//            // đường dẫn đến storage firebase folder/file.txt
-//            //StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
-//
-//        }else{
-//
-
         //Xử lý event thanh chinh size
         noiDung.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,12 +141,6 @@ public class ChiTietTruyen_Fragment extends Fragment {
             }
         });
         return view;
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
 
     }
 

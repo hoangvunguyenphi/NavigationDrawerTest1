@@ -24,51 +24,26 @@ import iuh.edu.vn.navigationdrawertest1.R;
 import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
-public class DanhMuc_Custom_Adapter extends ArrayAdapter<DanhMuc> {
+public class DanhMuc_Custom_Adapter extends ArrayAdapter<DanhMuc>{
     private Context context;
     private int resource;
     private List<DanhMuc> objects;
+
     public DanhMuc_Custom_Adapter( @NonNull Context context, int resource,  @NonNull List<DanhMuc> objects) {
         super(context, resource, objects);
         this.context=context;
         this.resource=resource;
         this.objects=objects;
     }
-    static class  ViewHolder{
-        TextView txtTenDanhMuc;
-        TextView txtCount;
-
-    }
 
     @NonNull
     @Override
     public View getView(int position,  @Nullable View convertView,  @NonNull ViewGroup parent) {
-        final ViewHolder viewHolder;
-        if(convertView==null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.danhmuc_custom_adapter,parent,false);
-            viewHolder = new ViewHolder();
-
-            viewHolder.txtTenDanhMuc=(TextView) convertView.findViewById(R.id.txtTenDanhMuc);
-            viewHolder.txtCount =(TextView)convertView.findViewById(R.id.txtCount);
-            convertView.setTag(viewHolder);
-        }
-        else{
-            viewHolder=(ViewHolder)convertView.getTag();
-        }
+        convertView = LayoutInflater.from(getContext()).inflate(R.layout.danhmuc_custom_adapter,parent,false);
+        TextView txtTenDanhMuc=(TextView) convertView.findViewById(R.id.txtTenDanhMuc);
+        TextView txtCount =(TextView)convertView.findViewById(R.id.txtCount);
         DanhMuc dm= objects.get(position);
-        viewHolder.txtTenDanhMuc.setText(dm.getTenDanhMuc());
-        DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
-        Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(dm.get_id());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                viewHolder.txtCount.setText(dataSnapshot.getChildrenCount()+" truyện");
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        txtTenDanhMuc.setText(dm.getTenDanhMuc());
         return convertView;
     }
 }

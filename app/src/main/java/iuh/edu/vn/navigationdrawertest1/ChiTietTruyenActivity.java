@@ -55,6 +55,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
     Menu mMenu;
     private static final String HISTORY_TABLE="HistoryTB";
     private static final String BOOKMARK_TABLE="BookmarkTB";
+    private static final String DOWNLOADED_TABLE = "DownloadedTB";
     private static final int REQUEST_ID_READ_PERMISSION = 100;
     private static final int REQUEST_ID_WRITE_PERMISSION = 200;
     private String activityTruoc;
@@ -68,7 +69,6 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
 
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("dataTruyen");
@@ -88,20 +88,29 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_truyen,menu);
-        mMenu=menu;
-        return true;
+        if(activityTruoc.equalsIgnoreCase("DSDownloaded")){
+            getMenuInflater().inflate(R.menu.menu_download,menu);
+            mMenu=menu;
+            return true;
+        }
+        else{
+            getMenuInflater().inflate(R.menu.menu_truyen,menu);
+            mMenu=menu;
+            return true;
+        }
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MyDatabaseHelper databaseHelper=new MyDatabaseHelper(this);
-        MenuItem item = mMenu.findItem(R.id.addToBookMark);
-        if(databaseHelper.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
-            item.setIcon(R.drawable.ic_added_bookmark);
+        if(!activityTruoc.equalsIgnoreCase("DSDownloaded")){
+            MenuItem item = mMenu.findItem(R.id.addToBookMark);
+            if(databaseHelper.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
+                item.setIcon(R.drawable.ic_added_bookmark);
+            }
         }
-       return true;
+        return true;
     }
 
     @Override
@@ -139,17 +148,18 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                         });
                         return true;
                     case "DSHistory":
-                        Intent i = new Intent(this,HistoryActivity.class);
-                        startActivity(i);
+                        startActivity(new Intent(this,HistoryActivity.class));
                         return true;
 
                     case "DSBookmark":
-                        Intent a = new Intent(this,BookmarkActivity.class);
-                        startActivity(a);
+                        startActivity(new Intent(this,BookmarkActivity.class));
                         return true;
                     case "DSDownloaded":
-                        Intent a2 = new Intent(this,DownloadActivity.class);
-                        startActivity(a2);
+                        startActivity(new Intent(this,DownloadActivity.class));
+                        return true;
+
+                    case "DSSearch":
+                        startActivity(new Intent(this,SearchActivity.class));
                         return true;
                 }
             case R.id.light:
@@ -167,50 +177,62 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
             case R.id.optionSize:
                 seekBar.setVisibility(View.VISIBLE);
                 return true;
+            case R.id.action_deleteDownloaded:
+                String path = truyen.getNoiDung();
+                File file = new File(path);
+                file.delete();
+                MyDatabaseHelper databaseHelper=new MyDatabaseHelper(this);
+                ArrayList<Truyen> listr = new ArrayList<>();
+                databaseHelper.deleteStory(truyen.get_id(),DOWNLOADED_TABLE);
+                Toast.makeText(ChiTietTruyenActivity.this, "Đã xoá", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ChiTietTruyenActivity.this,DownloadActivity.class));
+                return true;
             case R.id.action_download:
                 StorageReference riversRef = mStorageRef.child("truyen/test.txt");
-            final long ONE_MEGABYTE = 1024 * 1024;
-            riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
-                    StringBuffer stringBuffer = new StringBuffer();
-                    String data = "";
-                    if(bis!=null) {
-                        try {
-                            while ((data = reader.readLine()) != null) {
-                                stringBuffer.append("\t" + data + "\n");
+                final long ONE_MEGABYTE = 1024 * 1024;
+                riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
+                        StringBuffer stringBuffer = new StringBuffer();
+                        String data = "";
+                        if(bis!=null) {
+                            try {
+                                while ((data = reader.readLine()) != null) {
+                                    stringBuffer.append("\t" + data + "\n");
+                                }
+                                askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
+                                truyen.setNoiDung(linkTruyen);
+                                long check = db.addStory(truyen,"DownloadedTB");
+                                Toast.makeText(ChiTietTruyenActivity.this, check+"", Toast.LENGTH_SHORT).show();
+                                String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
+                                File dir = new File(path);
+                                if (!dir.exists()) {
+                                    dir.mkdirs();
+                                }
+                                File newFile = new File(path+"/"+truyen.get_id()+".txt");
+                                Log.d("MYID:",truyen.get_id());
+                                FileOutputStream fos = new FileOutputStream(newFile);
+                                OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
+                                myOutWriter.append(stringBuffer);
+                                myOutWriter.close();
+                                fos.close();
+                                bis.close();
+                                Toast.makeText(ChiTietTruyenActivity.this, "Đã tải xuống thành công !", Toast.LENGTH_SHORT).show();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                            askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                            String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
-                            truyen.setNoiDung(linkTruyen);
-                            long check = db.addStory(truyen,"DownloadedTB");
-                            Toast.makeText(ChiTietTruyenActivity.this, check+"", Toast.LENGTH_SHORT).show();
-                            String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
-                            File dir = new File(path);
-                            if (!dir.exists()) {
-                                dir.mkdirs();
-                            }
-                            File newFile = new File(path+"/"+truyen.get_id()+".txt");
-                            Log.d("MYID:",truyen.get_id());
-                            FileOutputStream fos = new FileOutputStream(newFile);
-                            OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
-                            myOutWriter.append(stringBuffer);
-                            myOutWriter.close();
-                            fos.close();
-                            bis.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    tv.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
-                }
-            });
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        tv.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
+                    }
+                });
                 return true;
             case R.id.addToBookMark:
                 MenuItem item1 = mMenu.findItem(R.id.addToBookMark);
