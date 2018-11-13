@@ -15,11 +15,18 @@ public class Truyen implements Serializable {
     private String tacGia;
     private String noiDung;
     private String ngayTao;
+    private String moTa;
+
+    public String getMoTa() {
+        return moTa;
+    }
+
+    public void setMoTa(String moTa) {
+        this.moTa = moTa;
+    }
 
     public Truyen() {
     }
-
-
 
     public Truyen(String _id, String tieuDe, String danhMuc, String tacGia, String noiDung, String ngayTao) {
         this._id = _id;

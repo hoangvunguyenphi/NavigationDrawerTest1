@@ -38,7 +38,7 @@ public class Truyen_List_Custom_Adapter  extends ArrayAdapter<Truyen> {
         TextView txtTacGia=(TextView)convertView.findViewById(R.id.txtTacGia);
         TextView txtNgayTao = (TextView)convertView.findViewById(R.id.txtNgayTao);
         txtTenTruyen.setText(truyen.getTieuDe());
-        txtNoiDung.setText(truyen.getNoiDung());
+        txtNoiDung.setText(truyen.getMoTa());
         txtTacGia.setText("- "+truyen.getTacGia());
         txtNgayTao.setText(truyen.getNgayTao());
         return convertView;

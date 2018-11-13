@@ -10,10 +10,19 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import iuh.edu.vn.navigationdrawertest1.R;
 import iuh.edu.vn.navigationdrawertest1.model.DanhMuc;
+import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 public class DanhMuc_Custom_Adapter extends ArrayAdapter<DanhMuc> {
     private Context context;
@@ -25,16 +34,41 @@ public class DanhMuc_Custom_Adapter extends ArrayAdapter<DanhMuc> {
         this.resource=resource;
         this.objects=objects;
     }
+    static class  ViewHolder{
+        TextView txtTenDanhMuc;
+        TextView txtCount;
+
+    }
 
     @NonNull
     @Override
     public View getView(int position,  @Nullable View convertView,  @NonNull ViewGroup parent) {
-        convertView = LayoutInflater.from(getContext()).inflate(R.layout.danhmuc_custom_adapter,parent,false);
+        final ViewHolder viewHolder;
+        if(convertView==null){
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.danhmuc_custom_adapter,parent,false);
+            viewHolder = new ViewHolder();
+
+            viewHolder.txtTenDanhMuc=(TextView) convertView.findViewById(R.id.txtTenDanhMuc);
+            viewHolder.txtCount =(TextView)convertView.findViewById(R.id.txtCount);
+            convertView.setTag(viewHolder);
+        }
+        else{
+            viewHolder=(ViewHolder)convertView.getTag();
+        }
         DanhMuc dm= objects.get(position);
-        TextView txtTenDanhMuc=(TextView)convertView.findViewById(R.id.txtTenDanhMuc);
-        TextView txtCount=(TextView)convertView.findViewById(R.id.txtCount);
-        txtTenDanhMuc.setText(dm.getTenDanhMuc());
-        txtCount.setText("1 truyện");
+        viewHolder.txtTenDanhMuc.setText(dm.getTenDanhMuc());
+        DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
+        Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(dm.get_id());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                viewHolder.txtCount.setText(dataSnapshot.getChildrenCount()+" truyện");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         return convertView;
     }
 }

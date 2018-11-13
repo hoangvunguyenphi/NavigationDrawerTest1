@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:paddingTop="7dp"
     android:paddingRight="7dp"
+
     android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"

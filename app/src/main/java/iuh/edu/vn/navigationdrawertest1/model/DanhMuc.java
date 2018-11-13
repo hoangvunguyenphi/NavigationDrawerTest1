@@ -9,6 +9,7 @@ import java.util.List;
 public class DanhMuc implements Serializable {
     private String _id;
     private String tenDanhMuc;
+    private long count;
     public DanhMuc(){
     }
     public DanhMuc(String _id, String tenDanhMuc) {
@@ -30,6 +31,14 @@ public class DanhMuc implements Serializable {
 
     public void setTenDanhMuc(String tenDanhMuc) {
         this.tenDanhMuc = tenDanhMuc;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
     @Override

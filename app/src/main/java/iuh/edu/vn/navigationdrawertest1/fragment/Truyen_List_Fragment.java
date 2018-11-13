@@ -56,7 +56,6 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
         danhMuc= (DanhMuc)bundle.getSerializable("selectedDanhMuc");
         Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
         lisTruyen=new ArrayList<>();
-
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -67,6 +66,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                             ds.child("tacGia").getValue(String.class),
                             ds.child("noiDung").getValue(String.class),
                             ds.child("ngayTao").getValue(String.class));
+                    truyen.setMoTa(ds.child("moTa").getValue(String.class));
                     lisTruyen.add(truyen);
                 }
                 phanTrangList(lisTruyen);
