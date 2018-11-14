@@ -57,44 +57,42 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
         final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Bundle bundle=this.getArguments();
         danhMuc= (DanhMuc)bundle.getSerializable("selectedDanhMuc");
-        if(isNetworkAvailable(getContext())){
-            lisTruyen=new ArrayList<>();
-            rootRef.child("allStory").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for(DataSnapshot ds: dataSnapshot.getChildren()){
-                                Truyen truyen= new Truyen(ds.child("_id").getValue(String.class),
-                                        ds.child("tieuDe").getValue(String.class),
-                                        ds.child("danhMuc").getValue(String.class),
-                                        ds.child("tacGia").getValue(String.class),
-                                        ds.child("noiDung").getValue(String.class),
-                                        ds.child("ngayTao").getValue(String.class));
-                                truyen.setMoTa(ds.child("moTa").getValue(String.class));
-                                lisTruyen.add(truyen);
-
-                            }
-                            phanTrangList(lisTruyen);
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else{
-            lisTruyen=new ArrayList<>();
+        if(!isNetworkAvailable(getContext())){
             Toast.makeText(getActivity(), "Lỗi : vui lòng kiểm tra kết nối internet!", Toast.LENGTH_LONG).show();
         }
+        lisTruyen=new ArrayList<>();
+        rootRef.child("allStory").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Query query = rootRef.child("allStory").orderByChild("danhMuc").equalTo(danhMuc.get_id());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            Truyen truyen= new Truyen(ds.child("_id").getValue(String.class),
+                                    ds.child("tieuDe").getValue(String.class),
+                                    ds.child("danhMuc").getValue(String.class),
+                                    ds.child("tacGia").getValue(String.class),
+                                    ds.child("noiDung").getValue(String.class),
+                                    ds.child("ngayTao").getValue(String.class));
+                            truyen.setMoTa(ds.child("moTa").getValue(String.class));
+                            lisTruyen.add(truyen);
+
+                        }
+                        phanTrangList(lisTruyen);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         TextView txtTenDanhMuc=(TextView)view.findViewById(R.id.txtTenDanhMuc);
         txtTenDanhMuc.setText(danhMuc.getTenDanhMuc());

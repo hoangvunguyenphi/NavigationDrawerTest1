@@ -54,29 +54,28 @@ public class DanhMuc_List_Fragment extends ListFragment {
         final View view=inflater.inflate(R.layout.danhmuc_list_fragment,container,false);
         rootRef=FirebaseDatabase.getInstance();
         danhMucList = new ArrayList<>();
-        if(isNetworkAvailable(getContext())){
-            danhMucRef=rootRef.getReference().child("allCategory");
-            danhMucRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        DanhMuc dm = new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class));
-                        danhMucList.add(dm);
-                    }
-                    DanhMuc_Custom_Adapter danhMuc_custom_adapter = new DanhMuc_Custom_Adapter(getContext(),
-                            R.layout.danhmuc_custom_adapter, danhMucList);
-                    setListAdapter(danhMuc_custom_adapter);
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else {
-            danhMucList.clear();
+        if(!isNetworkAvailable(getContext())) {
             Toast.makeText(getActivity(), "Lỗi : vui lòng kiểm tra kết nối internet!", Toast.LENGTH_LONG).show();
         }
+        danhMucRef=rootRef.getReference().child("allCategory");
+        danhMucRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    DanhMuc dm = new DanhMuc(ds.child("_id").getValue(String.class), ds.child("tenDanhMuc").getValue(String.class));
+                    danhMucList.add(dm);
+                }
+                DanhMuc_Custom_Adapter danhMuc_custom_adapter = new DanhMuc_Custom_Adapter(getContext(),
+                        R.layout.danhmuc_custom_adapter, danhMucList);
+                setListAdapter(danhMuc_custom_adapter);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity(), "Có gián đoạn, vui lòng tải lại !", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
         return view;
     }
