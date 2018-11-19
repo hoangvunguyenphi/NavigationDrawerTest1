@@ -15,14 +15,14 @@
 
     <ListView
         android:id="@android:id/list"
-        android:layout_weight="46"
+        android:layout_weight="43"
         android:layout_width="match_parent"
         android:layout_height="0dp">
     </ListView>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom"
-        android:layout_weight="4"
+        android:layout_weight="7"
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
         android:layout_height="0dp">
@@ -48,7 +48,7 @@
 
             <TextView
                 android:id="@+id/recurTR"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -56,7 +56,7 @@
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"

@@ -39,7 +39,6 @@ public class Downloaded_List_Fragment  extends ListFragment implements SearchVie
         MyDatabaseHelper databaseHelper=new MyDatabaseHelper(getContext());
         List<Truyen> list=databaseHelper.getAllStory(DOWNLOADED_TABLE);
         lisTruyen.addAll(list);
-        Toast.makeText(getContext(), list.toString(), Toast.LENGTH_SHORT).show();
         truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter,lisTruyen);
         setListAdapter(truyen_list_custom_adapter);
         return view;

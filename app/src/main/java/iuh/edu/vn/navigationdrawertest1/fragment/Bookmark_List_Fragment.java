@@ -48,7 +48,6 @@ public class Bookmark_List_Fragment  extends ListFragment implements SearchView.
 //        databaseHelper.deleteStory(truyen.get_id());
         List<Truyen> list=databaseHelper.getAllStory(BOOKMARK_TABLE);
         lisTruyen.addAll(list);
-        Log.d("LOGGGGGGG",lisTruyen.toString());
         truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter,lisTruyen);
         setListAdapter(truyen_list_custom_adapter);
         return view;

@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,7 +77,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         activityTruoc = bundle.getString("activityTruoc");
         actionBar.setTitle(truyen.getTieuDe());
 
-        if(activityTruoc.equalsIgnoreCase("DSTruyen")){
+        if(activityTruoc.equalsIgnoreCase("DSTruyen") || activityTruoc.equalsIgnoreCase("DSSearch")  ){
             long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
         }
 //        Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
@@ -112,6 +113,36 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         }
         return true;
     }
+
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        final ScrollView scrollView=(ScrollView)findViewById(R.id.scrlView);
+//        final TextView txtView = (TextView)scrollView.getChildAt(0);
+//        final  int firstVisibleLineOffset = txtView.getLayout().getLineForVertical(scrollView.getScrollY());
+//        final int firstVisibleCharacterOffset = txtView.getLayout().getLineStart(firstVisibleLineOffset);
+//        Toast.makeText(this, "Apause", Toast.LENGTH_SHORT).show();
+//        outState.putInt("ScrollViewContainerTextViewFirstVisibleCharacterOffset", firstVisibleCharacterOffset);
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        Toast.makeText(this, "Astart", Toast.LENGTH_SHORT).show();
+//        final  int firstVisableCharacteroffset = savedInstanceState.getInt("ScrollViewContainerTextViewFirstVisibleCharacterOffset");
+//        final ScrollView scrollView=(ScrollView)findViewById(R.id.scrlView);
+//        scrollView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                final  TextView textView=(TextView)scrollView.getChildAt(0);
+//                final int firstVisableLineOffset=textView.getLayout().getLineForOffset(firstVisableCharacteroffset);
+//                final  int pixelOffset = textView.getLayout().getLineTop(firstVisableLineOffset);
+//                scrollView.scrollTo(0,pixelOffset);
+//            }
+//        });
+//
+//    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -188,7 +219,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                 startActivity(new Intent(ChiTietTruyenActivity.this,DownloadActivity.class));
                 return true;
             case R.id.action_download:
-                StorageReference riversRef = mStorageRef.child("truyen/test.txt");
+                StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
                 final long ONE_MEGABYTE = 1024 * 1024;
                 riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
@@ -206,14 +237,12 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                                 String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
                                 truyen.setNoiDung(linkTruyen);
                                 long check = db.addStory(truyen,"DownloadedTB");
-                                Toast.makeText(ChiTietTruyenActivity.this, check+"", Toast.LENGTH_SHORT).show();
                                 String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
                                 File dir = new File(path);
                                 if (!dir.exists()) {
                                     dir.mkdirs();
                                 }
                                 File newFile = new File(path+"/"+truyen.get_id()+".txt");
-                                Log.d("MYID:",truyen.get_id());
                                 FileOutputStream fos = new FileOutputStream(newFile);
                                 OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
                                 myOutWriter.append(stringBuffer);

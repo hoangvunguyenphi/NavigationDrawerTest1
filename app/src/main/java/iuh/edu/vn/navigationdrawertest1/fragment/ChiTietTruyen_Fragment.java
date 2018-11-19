@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
@@ -15,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,13 +48,14 @@ import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
 public class ChiTietTruyen_Fragment extends Fragment {
     TextView noiDung;
     SeekBar seekBar;
+    View view;
     private StorageReference mStorageRef;
     private static final int REQUEST_ID_READ_PERMISSION = 100;
     private static final int REQUEST_ID_WRITE_PERMISSION = 200;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
+         view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
 
         Bundle bundle = this.getArguments();
         MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
@@ -65,8 +69,6 @@ public class ChiTietTruyen_Fragment extends Fragment {
         float maxSize = seekBar.getMax();
         noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
         noiDung.setTextColor(Color.BLACK);
-        noiDung.setMovementMethod(new ScrollingMovementMethod());
-
         //Kiểm tra coi từ activityDownload sang hay từ DsTruyen (loadonline) sang
         if(bundle.getString("activityTruoc").equalsIgnoreCase("DSTruyen") || bundle.getString("activityTruoc").equalsIgnoreCase("DSBookmark") ||bundle.getString("activityTruoc").equalsIgnoreCase("DSHistory")){
             StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
@@ -162,6 +164,4 @@ public class ChiTietTruyen_Fragment extends Fragment {
         }
         return true;
     }
-
-
 }

@@ -42,6 +42,7 @@ import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 public class Truyen_List_Fragment  extends ListFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
     private List<Truyen> lisTruyen;
     private DanhMuc danhMuc;
+    private View view;
     Truyen_List_Custom_Adapter truyen_list_custom_adapter;
     SearchView searchView;
     public static final int SOTRUYEN = 10;
@@ -53,7 +54,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.truyen_danhsach_fragment,container,false);
+        view = inflater.inflate(R.layout.truyen_danhsach_fragment,container,false);
         final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         Bundle bundle=this.getArguments();
         danhMuc= (DanhMuc)bundle.getSerializable("selectedDanhMuc");
@@ -180,12 +181,12 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
         final Button previous,next,first,last;
         final TextView recur,max;
 
-        max = getActivity().findViewById(R.id.maxTR);
-        recur = getActivity().findViewById(R.id.recurTR);
-        previous = getActivity().findViewById(R.id.previousTR);
-        next = getActivity().findViewById(R.id.nextTR);
-        first = getActivity().findViewById(R.id.firstTR);
-        last = getActivity().findViewById(R.id.lastTR);
+        max = (TextView)view.findViewById(R.id.maxTR);
+        recur = (TextView)view.findViewById(R.id.recurTR);
+        previous = view.findViewById(R.id.previousTR);
+        next = view.findViewById(R.id.nextTR);
+        first = view.findViewById(R.id.firstTR);
+        last = view.findViewById(R.id.lastTR);
         int size = listTruyen.size();
         int imax = size/SOTRUYEN;
         if( size % SOTRUYEN !=0 || imax==0)
@@ -202,7 +203,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 firstList.add(listTruyen.get(i));
             }
         }
-        truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter, firstList);
+        truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(view.getContext(), R.layout.truyen_list_custom_adapter, firstList);
         setListAdapter(truyen_list_custom_adapter);
         checkTrang(1,imax,next,previous);
         previous.setOnClickListener(new View.OnClickListener() {
@@ -216,7 +217,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 for(int i=irecur*SOTRUYEN -SOTRUYEN;i<irecur*SOTRUYEN;i++){
                     phanList.add(listTruyen.get(i));
                 }
-                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
+                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(view.getContext(),R.layout.truyen_list_custom_adapter,phanList);
                 setListAdapter(truyen_list_custom_adapter);
                 checkTrang(irecur,imax,next,previous);
             }
@@ -238,7 +239,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                         phanList.add(listTruyen.get(i));
                     }
                 }
-                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
+                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(view.getContext(),R.layout.truyen_list_custom_adapter,phanList);
                 setListAdapter(truyen_list_custom_adapter);
                 checkTrang(irecur,imax,next,previous);
             }
@@ -258,7 +259,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                     }
                 }
                 recur.setText(1+"");
-                truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter, firstListClick);
+                truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(view.getContext(), R.layout.truyen_list_custom_adapter, firstListClick);
                 setListAdapter(truyen_list_custom_adapter);
                 checkTrang(1, finalImax,next,previous);
             }
@@ -272,7 +273,7 @@ public class Truyen_List_Fragment  extends ListFragment implements SearchView.On
                 for(int i=imax*SOTRUYEN -SOTRUYEN;i<listTruyen.size();i++){
                     phanList.add(listTruyen.get(i));
                 }
-                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(getContext(),R.layout.truyen_list_custom_adapter,phanList);
+                truyen_list_custom_adapter = new Truyen_List_Custom_Adapter(view.getContext(),R.layout.truyen_list_custom_adapter,phanList);
                 setListAdapter(truyen_list_custom_adapter);
                 checkTrang(imax,imax,next,previous);
             }

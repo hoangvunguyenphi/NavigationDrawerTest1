@@ -76,12 +76,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Toast.makeText(MainActivity.this, "Trang chủ", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this,MainActivity.class));
+            return true;
         } else if (id == R.id.nav_search) {
             startActivity(new Intent(MainActivity.this,SearchActivity.class));
             return  true;
         } else if (id == R.id.nav_exit) {
             finish();
+            System.exit(0);
             return true;
         } else if (id == R.id.nav_setting) {
             Toast.makeText(MainActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();

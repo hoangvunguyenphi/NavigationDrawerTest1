@@ -41,7 +41,6 @@ public class DanhMuc_Custom_Adapter extends ArrayAdapter<DanhMuc>{
     public View getView(int position,  @Nullable View convertView,  @NonNull ViewGroup parent) {
         convertView = LayoutInflater.from(getContext()).inflate(R.layout.danhmuc_custom_adapter,parent,false);
         TextView txtTenDanhMuc=(TextView) convertView.findViewById(R.id.txtTenDanhMuc);
-        TextView txtCount =(TextView)convertView.findViewById(R.id.txtCount);
         DanhMuc dm= objects.get(position);
         txtTenDanhMuc.setText(dm.getTenDanhMuc());
         return convertView;
