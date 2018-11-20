@@ -70,7 +70,6 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("dataTruyen");
         truyen = (Truyen) bundle.getSerializable("selectedTruyen");
@@ -78,7 +77,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         actionBar.setTitle(truyen.getTieuDe());
 
         if(activityTruoc.equalsIgnoreCase("DSTruyen") || activityTruoc.equalsIgnoreCase("DSSearch")  ){
-            long d =databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
+            databaseHelper.addStory(truyen,HISTORY_TABLE); // Thêm vào lịch sử
         }
 //        Toast.makeText(this, d+"", Toast.LENGTH_SHORT).show();
         ChiTietTruyen_Fragment cttr = new ChiTietTruyen_Fragment();
@@ -113,35 +112,6 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         }
         return true;
     }
-
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        final ScrollView scrollView=(ScrollView)findViewById(R.id.scrlView);
-//        final TextView txtView = (TextView)scrollView.getChildAt(0);
-//        final  int firstVisibleLineOffset = txtView.getLayout().getLineForVertical(scrollView.getScrollY());
-//        final int firstVisibleCharacterOffset = txtView.getLayout().getLineStart(firstVisibleLineOffset);
-//        Toast.makeText(this, "Apause", Toast.LENGTH_SHORT).show();
-//        outState.putInt("ScrollViewContainerTextViewFirstVisibleCharacterOffset", firstVisibleCharacterOffset);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        Toast.makeText(this, "Astart", Toast.LENGTH_SHORT).show();
-//        final  int firstVisableCharacteroffset = savedInstanceState.getInt("ScrollViewContainerTextViewFirstVisibleCharacterOffset");
-//        final ScrollView scrollView=(ScrollView)findViewById(R.id.scrlView);
-//        scrollView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                final  TextView textView=(TextView)scrollView.getChildAt(0);
-//                final int firstVisableLineOffset=textView.getLayout().getLineForOffset(firstVisableCharacteroffset);
-//                final  int pixelOffset = textView.getLayout().getLineTop(firstVisableLineOffset);
-//                scrollView.scrollTo(0,pixelOffset);
-//            }
-//        });
-//
-//    }
 
 
     @Override
@@ -235,8 +205,12 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                                 }
                                 askPermission(REQUEST_ID_WRITE_PERMISSION,Manifest.permission.WRITE_EXTERNAL_STORAGE);
                                 String linkTruyen = Environment.getExternalStorageDirectory().getAbsolutePath() + "/truyen/" + truyen.get_id()+".txt";
-                                truyen.setNoiDung(linkTruyen);
-                                long check = db.addStory(truyen,"DownloadedTB");
+                                Truyen tr=new Truyen(truyen.get_id(),truyen.getTieuDe(),truyen.getDanhMuc(),truyen.getTacGia(),truyen.getNoiDung(),truyen.getNgayTao());
+                                tr.setMoTa(truyen.getMoTa());
+                                tr.setNoiDung(linkTruyen);
+                                Log.d("EXXX",tr.getNoiDung());
+                                long check = db.addStory(tr,"DownloadedTB");
+
                                 String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/truyen";
                                 File dir = new File(path);
                                 if (!dir.exists()) {
@@ -249,7 +223,12 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                                 myOutWriter.close();
                                 fos.close();
                                 bis.close();
-                                Toast.makeText(ChiTietTruyenActivity.this, "Đã tải xuống thành công !", Toast.LENGTH_SHORT).show();
+                                if(check<0){
+                                    Toast.makeText(ChiTietTruyenActivity.this, "Đã tồn tại, muốn tải lại hãy xoá trong danh sách tải xuống!", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(ChiTietTruyenActivity.this, "Đã tải xuống !", Toast.LENGTH_SHORT).show();
+                                }
 
                             } catch (IOException e) {
                                 e.printStackTrace();

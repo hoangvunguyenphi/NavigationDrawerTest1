@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ public class Downloaded_List_Fragment  extends ListFragment implements SearchVie
         MyDatabaseHelper databaseHelper=new MyDatabaseHelper(getContext());
         List<Truyen> list=databaseHelper.getAllStory(DOWNLOADED_TABLE);
         lisTruyen.addAll(list);
+        Log.d("EXX",list.toString());
         truyen_list_custom_adapter=new Truyen_List_Custom_Adapter(getContext(), R.layout.truyen_list_custom_adapter,lisTruyen);
         setListAdapter(truyen_list_custom_adapter);
         return view;

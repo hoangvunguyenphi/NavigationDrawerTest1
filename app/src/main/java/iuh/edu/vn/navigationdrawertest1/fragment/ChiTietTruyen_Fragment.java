@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -40,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import iuh.edu.vn.navigationdrawertest1.ChiTietTruyenActivity;
 import iuh.edu.vn.navigationdrawertest1.R;
 import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 import iuh.edu.vn.navigationdrawertest1.sqlitedb.MyDatabaseHelper;
@@ -49,30 +51,57 @@ public class ChiTietTruyen_Fragment extends Fragment {
     TextView noiDung;
     SeekBar seekBar;
     View view;
+    ScrollView scrollView;
+    private Truyen truyen;
+    private String activityTruoc="";
     private StorageReference mStorageRef;
     private static final int REQUEST_ID_READ_PERMISSION = 100;
     private static final int REQUEST_ID_WRITE_PERMISSION = 200;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
+        view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
 
         Bundle bundle = this.getArguments();
         MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
-        final Truyen truyen= (Truyen)bundle.getSerializable("selectedTruyen");
+        truyen= (Truyen)bundle.getSerializable("selectedTruyen");
+        activityTruoc=bundle.getString("activityTruoc");
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         //Thannh chỉnh size chữ
         noiDung = view.findViewById(R.id.noiDung);
+        scrollView=view.findViewById(R.id.scrlView);
         seekBar = view.findViewById(R.id.seekBarSize);
         seekBar.setVisibility(View.GONE);
         float maxSize = seekBar.getMax();
         noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
         noiDung.setTextColor(Color.BLACK);
-        //Kiểm tra coi từ activityDownload sang hay từ DsTruyen (loadonline) sang
-        if(bundle.getString("activityTruoc").equalsIgnoreCase("DSTruyen") || bundle.getString("activityTruoc").equalsIgnoreCase("DSBookmark") ||bundle.getString("activityTruoc").equalsIgnoreCase("DSHistory")){
+        final int trang = getTrangDaXem(truyen);
+        if(bundle.getString("activityTruoc").equalsIgnoreCase("DSDownloaded")){
+            Log.d("EXXXXXX1",truyen.getNoiDung());
+            askPermission(REQUEST_ID_READ_PERMISSION,Manifest.permission.READ_EXTERNAL_STORAGE);
+            String s = "";
+            String fileContent = "";
+            try {
+                File myFile = new File(truyen.getNoiDung());
+                FileInputStream fIn = new FileInputStream(myFile);
+                BufferedReader myReader = new BufferedReader(
+                        new InputStreamReader(fIn));
+
+                while ((s = myReader.readLine()) != null) {
+                    fileContent += s +"\n";
+                }
+                myReader.close();
+
+                noiDung.setText(fileContent);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Log.d("EXXXXXX",truyen.getNoiDung());
             StorageReference riversRef = mStorageRef.child(truyen.getNoiDung());
-            final long ONE_MEGABYTE = 1024 * 1024;
+            final long ONE_MEGABYTE = 1024 * 1024 ;
             riversRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
@@ -95,29 +124,10 @@ public class ChiTietTruyen_Fragment extends Fragment {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+                    Log.d("EXXXXXX",exception.toString());
                     noiDung.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
                 }
             });
-        }
-        else if(bundle.getString("activityTruoc").equalsIgnoreCase("DSDownloaded")){
-            askPermission(REQUEST_ID_READ_PERMISSION,Manifest.permission.READ_EXTERNAL_STORAGE);
-            String s = "";
-            String fileContent = "";
-            try {
-                File myFile = new File(truyen.getNoiDung());
-                FileInputStream fIn = new FileInputStream(myFile);
-                BufferedReader myReader = new BufferedReader(
-                        new InputStreamReader(fIn));
-
-                while ((s = myReader.readLine()) != null) {
-                    fileContent += s +"\n";
-                }
-                myReader.close();
-
-                noiDung.setText(fileContent);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         //Xử lý event thanh chinh size
         noiDung.setOnClickListener(new View.OnClickListener() {
@@ -142,10 +152,45 @@ public class ChiTietTruyen_Fragment extends Fragment {
 
             }
         });
+
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.smoothScrollTo(0,trang);
+                    }
+                });
+            }
+        });
         return view;
 
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.scrlView).scrollTo(0,500);
+    }
+    public int getTrangDaXem(Truyen truyen1){
+        MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
+        if(activityTruoc.equalsIgnoreCase("DSBookmark")){
+            return helper.getStory(truyen1.get_id(), "BookmarkTB").getTrangDaXem();
+        }
+        else{
+            if(activityTruoc.equalsIgnoreCase("DSDownloaded")){
+                return helper.getStory(truyen1.get_id(), "DownloadedTB").getTrangDaXem();
+            }
+            else{
+                if(activityTruoc.equalsIgnoreCase("DSTruyen") || activityTruoc.equalsIgnoreCase("DSHistory") || activityTruoc.equalsIgnoreCase("DSSearch")){
+                    return helper.getStory(truyen1.get_id(), "HistoryTB").getTrangDaXem();
+                }
+            }
+
+            return 0;
+        }
+    }
     private boolean askPermission(int requestId, String permissionName) {
         if (android.os.Build.VERSION.SDK_INT >= 23) {
 
@@ -164,4 +209,29 @@ public class ChiTietTruyen_Fragment extends Fragment {
         }
         return true;
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        int a=0;
+        a=scrollView.getScrollY();
+        MyDatabaseHelper databaseHelper=new MyDatabaseHelper(getContext());
+        truyen.setTrangDaXem(a);
+        if(activityTruoc.equalsIgnoreCase("DSBookmark")){
+            databaseHelper.updateStory(truyen,"BookmarkTB");
+        }
+        else{
+            if(activityTruoc.equalsIgnoreCase("DSDownloaded")){
+                databaseHelper.updateStory(truyen,"DownloadedTB");
+            }
+            else{
+                if(activityTruoc.equalsIgnoreCase("DSTruyen") || activityTruoc.equalsIgnoreCase("DSHistory") || activityTruoc.equalsIgnoreCase("DSSearch")){
+                    databaseHelper.updateStory(truyen,"HistoryTB");
+                }
+            }
+
+        }
+    }
+
+
 }

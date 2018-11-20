@@ -16,6 +16,15 @@ public class Truyen implements Serializable {
     private String noiDung;
     private String ngayTao;
     private String moTa;
+    private int trangDaXem;
+
+    public int getTrangDaXem() {
+        return trangDaXem;
+    }
+
+    public void setTrangDaXem(int trangDaXem) {
+        this.trangDaXem = trangDaXem;
+    }
 
     public String getMoTa() {
         return moTa;
