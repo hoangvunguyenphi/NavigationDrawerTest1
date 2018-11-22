@@ -89,12 +89,12 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if(activityTruoc.equalsIgnoreCase("DSDownloaded")){
             getMenuInflater().inflate(R.menu.menu_download,menu);
-            mMenu=menu;
+            this.mMenu=menu;
             return true;
         }
         else{
             getMenuInflater().inflate(R.menu.menu_truyen,menu);
-            mMenu=menu;
+            this.mMenu=menu;
             return true;
         }
     }
@@ -106,7 +106,7 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
         if(!activityTruoc.equalsIgnoreCase("DSDownloaded")){
             MenuItem item = mMenu.findItem(R.id.addToBookMark);
             if(databaseHelper.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
-                item.setIcon(R.drawable.ic_added_bookmark);
+                item.setIcon(ContextCompat.getDrawable(this,R.drawable.ic_added_bookmark));
             }
         }
         return true;
@@ -163,16 +163,22 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                         return true;
                 }
             case R.id.light:
-                frag.getView().setBackgroundColor(Color.WHITE);
-                tv.setTextColor(Color.BLACK);
+                frag.getView().setBackgroundColor(Color.parseColor("#e9ebee"));
+                tv.setTextColor(Color.parseColor("#1d2129"));
+                db.updateTextColor("1111","#1d2129");
+                db.updateBackgroundColor("1111","#e9ebee");
                 return true;
             case R.id.yellow:
                 frag.getView().setBackgroundColor(Color.parseColor("#dfdcc3"));
                 tv.setTextColor(Color.parseColor("#121212"));
+                db.updateTextColor("1111","#121212");
+                db.updateBackgroundColor("1111","#dfdcc3");
                 return true;
             case R.id.dark:
-                frag.getView().setBackgroundColor(Color.BLACK);
+                frag.getView().setBackgroundColor(Color.parseColor("#000000"));
                 tv.setTextColor(Color.parseColor("#818181"));
+                db.updateTextColor("1111","#818181");
+                db.updateBackgroundColor("1111","#000000");
                 return true;
             case R.id.optionSize:
                 seekBar.setVisibility(View.VISIBLE);
@@ -240,23 +246,22 @@ public class ChiTietTruyenActivity extends AppCompatActivity {
                         tv.setText("Tải truyện thất bại, vui lòng kiểm tra đường truyền!");
                     }
                 });
-                return false;
+                return true;
             case R.id.addToBookMark:
                 MenuItem item1 = mMenu.findItem(R.id.addToBookMark);
                 if(db.getStory(truyen.get_id(),BOOKMARK_TABLE)!=null){
                     db.deleteStory(truyen.get_id(),BOOKMARK_TABLE);
-                    item1.setIcon(R.drawable.ic_menu_bookmark_null);
+                    item1.setIcon(ContextCompat.getDrawable(this,R.drawable.ic_menu_bookmark_null));
                     Toast.makeText(ChiTietTruyenActivity.this, "Đã xoá khỏi bookmark!", Toast.LENGTH_SHORT).show();
-                    return false;
                 }
                 else{
                     long d = db.addStory(truyen,BOOKMARK_TABLE);
                     if(d>0){
-                        item1.setIcon(R.drawable.ic_added_bookmark);
+                        item1.setIcon(ContextCompat.getDrawable(this,R.drawable.ic_added_bookmark));
                         Toast.makeText(ChiTietTruyenActivity.this, "Đã thêm vào bookmark!", Toast.LENGTH_SHORT).show();
                     }
-                    return false;
                 }
+                return true;
 
         }
         return super.onOptionsItemSelected(item);

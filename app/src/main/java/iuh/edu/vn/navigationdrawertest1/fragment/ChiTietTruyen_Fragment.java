@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 import iuh.edu.vn.navigationdrawertest1.ChiTietTruyenActivity;
 import iuh.edu.vn.navigationdrawertest1.R;
@@ -61,12 +63,12 @@ public class ChiTietTruyen_Fragment extends Fragment {
     private static final int REQUEST_ID_READ_PERMISSION = 100;
     private static final int REQUEST_ID_WRITE_PERMISSION = 200;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
         Bundle bundle = this.getArguments();
+        final MyDatabaseHelper databaseHelper=new MyDatabaseHelper(getContext());
         truyen= (Truyen)bundle.getSerializable("selectedTruyen");
         activityTruoc=bundle.getString("activityTruoc");
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -75,9 +77,12 @@ public class ChiTietTruyen_Fragment extends Fragment {
         scrollView=view.findViewById(R.id.scrlView);
         seekBar = view.findViewById(R.id.seekBarSize);
         seekBar.setVisibility(View.GONE);
-        float maxSize = seekBar.getMax();
-        noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
-        noiDung.setTextColor(Color.BLACK);
+        final List<String> sett= databaseHelper.getSetting("1111");
+        noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,Integer.parseInt(sett.get(3)));
+
+        seekBar.setProgress(Integer.parseInt(sett.get(3))-10);
+        noiDung.setTextColor(Color.parseColor(sett.get(1)));
+        view.setBackgroundColor(Color.parseColor(sett.get(2)));
 
         if(bundle.getString("activityTruoc").equalsIgnoreCase("DSDownloaded")){
             Log.d("EXXXXXX1",truyen.getNoiDung());
@@ -141,18 +146,16 @@ public class ChiTietTruyen_Fragment extends Fragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
                 noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,progress+10);
+                databaseHelper.updateTextSize("1111",progress+10);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
         return view;
@@ -199,12 +202,15 @@ public class ChiTietTruyen_Fragment extends Fragment {
         scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                scrollView.post(new Runnable() {
+                scrollView.smoothScrollTo(0,trang);
+                Handler h = new Handler();
+                final ViewTreeObserver.OnGlobalLayoutListener victim = this;
+                h.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        scrollView.smoothScrollTo(0,trang);
+                        scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(victim);
                     }
-                });
+                }, 1500);
             }
         });
     }

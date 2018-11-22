@@ -13,20 +13,21 @@
         <TextView
             android:padding="8sp"
             android:id="@+id/noiDung"
+            android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             android:text="Đang tải..." />
     </ScrollView>
+
     <SeekBar
         android:id="@+id/seekBarSize"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
         android:background="@color/colorPrimary"
-        android:max="40"
-        android:progress="20"
-        android:thumb="@android:drawable/checkbox_off_background" >
-    </SeekBar>
+        android:progress="10"
+        android:max="30"
+        android:thumb="@android:drawable/checkbox_off_background"></SeekBar>
 
 </FrameLayout>

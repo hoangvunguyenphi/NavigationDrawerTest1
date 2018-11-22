@@ -16,7 +16,7 @@ import iuh.edu.vn.navigationdrawertest1.model.Truyen;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION=6;
+    private static final int DATABASE_VERSION=10;
     private static final String DATABASE_NAME="SQLITE_DB";
     private static final String COLUMN_ID="_id";
     private static final String COLUMN_TIEUDE="tieuDe";
@@ -33,6 +33,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public MyDatabaseHelper( Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -64,13 +65,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_NGAYTAO + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_TRANG + " INT )" ;
         String script4="CREATE TABLE " + "SettingTB" +
-                " (" + COLUMN_ID +" NVARCHAR(50) PRIMARY KEY NOT NULL , "
-                + COLUMN_TIEUDE + " NVARCHAR(200) NOT NULL ,"
-                + COLUMN_NGAYTAO + " NVARCHAR(100) NOT NULL ,"
-                + COLUMN_TRANG + " INT )" ;
+                " (" + COLUMN_ID +" INT PRIMARY KEY NOT NULL , "
+                + COLUMN_TEXTCOLOR + " NVARCHAR(200) ,"
+                + COLUMN_BACKGROUNDCOLOR + " NVARCHAR(200) ,"
+                + COLUMN_TEXTSIZE + " INT )" ;
         db.execSQL(script);
         db.execSQL(script2);
         db.execSQL(script3);
+        db.execSQL(script4);
+        db.execSQL("insert into " + "SettingTB" + " (" + COLUMN_ID + "," + COLUMN_TEXTCOLOR + ","
+                + COLUMN_BACKGROUNDCOLOR + "," + COLUMN_TEXTSIZE + ") values(1111,'#1d2129','#e9ebee',20)");
     }
 
     @Override
@@ -78,6 +82,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + "HistoryTB");
         db.execSQL("DROP TABLE IF EXISTS " + "BookmarkTB");
         db.execSQL("DROP TABLE IF EXISTS " + "DownloadedTB");
+        db.execSQL("DROP TABLE IF EXISTS " + "SettingTB");
         onCreate(db);
     }
 
@@ -101,6 +106,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             return -5;
         }
     }
+
     public long updateStory(Truyen truyen,String table){
         long result=-5;
         SQLiteDatabase db=this.getWritableDatabase();
@@ -117,6 +123,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         Log.d("EXXUPDATE",truyen.getNoiDung());
         return result;
     }
+
 
     public Truyen getStory(String id,String table){
         SQLiteDatabase db=this.getReadableDatabase();
@@ -154,5 +161,46 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database=this.getWritableDatabase();
         database.delete(table, COLUMN_ID + "=?", new String[] {id});
         database.close();
+    }
+
+    public long updateTextColor(String id,String tc ){
+        long result=-5;
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues values= new ContentValues();
+        values.put(COLUMN_TEXTCOLOR,tc);
+        result=db.update("SettingTB",values,COLUMN_ID+"=?",new String[]{id});
+        return result;
+    }
+    public long updateTextSize(String id,int ts ){
+        long result=-5;
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues values= new ContentValues();
+        values.put(COLUMN_TEXTSIZE,ts);
+        result=db.update("SettingTB",values,COLUMN_ID+"=?",new String[]{id});
+        return result;
+    }
+    public long updateBackgroundColor(String id,String bc ){
+        long result=-5;
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues values= new ContentValues();
+        values.put(COLUMN_BACKGROUNDCOLOR,bc);
+        result=db.update("SettingTB",values,COLUMN_ID+"=?",new String[]{id});
+        return result;
+    }
+    public List<String> getSetting(String id){
+        SQLiteDatabase db=this.getReadableDatabase();
+        List<String> sett=new ArrayList<>();
+        Cursor cursor=db.query("SettingTB", new String[]{COLUMN_ID,COLUMN_TEXTCOLOR,COLUMN_BACKGROUNDCOLOR,COLUMN_TEXTSIZE},COLUMN_ID + "=?", new String[]{id},null,null,null,null);
+        if(cursor.getCount()>0) {
+            cursor.moveToFirst();
+            sett.add(cursor.getString(0));
+            sett.add(cursor.getString(1));
+            sett.add(cursor.getString(2));
+            sett.add(String.valueOf(cursor.getInt(3)));
+            return sett;
+        }
+        else{
+            return sett;
+        }
     }
 }
