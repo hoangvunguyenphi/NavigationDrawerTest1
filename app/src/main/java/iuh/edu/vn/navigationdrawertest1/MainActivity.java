@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this,SearchActivity.class));
             return  true;
         } else if (id == R.id.nav_exit) {
-            finish();
             System.exit(0);
             return true;
         } else if (id == R.id.nav_setting) {

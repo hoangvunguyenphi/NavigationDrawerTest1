@@ -13,10 +13,13 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -57,17 +60,16 @@ public class ChiTietTruyen_Fragment extends Fragment {
     private StorageReference mStorageRef;
     private static final int REQUEST_ID_READ_PERMISSION = 100;
     private static final int REQUEST_ID_WRITE_PERMISSION = 200;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chi_tiet_truyen, container, false);
-
         Bundle bundle = this.getArguments();
-        MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
         truyen= (Truyen)bundle.getSerializable("selectedTruyen");
         activityTruoc=bundle.getString("activityTruoc");
         mStorageRef = FirebaseStorage.getInstance().getReference();
-
         //Thannh chỉnh size chữ
         noiDung = view.findViewById(R.id.noiDung);
         scrollView=view.findViewById(R.id.scrlView);
@@ -76,7 +78,7 @@ public class ChiTietTruyen_Fragment extends Fragment {
         float maxSize = seekBar.getMax();
         noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,(maxSize/2));
         noiDung.setTextColor(Color.BLACK);
-        final int trang = getTrangDaXem(truyen);
+
         if(bundle.getString("activityTruoc").equalsIgnoreCase("DSDownloaded")){
             Log.d("EXXXXXX1",truyen.getNoiDung());
             askPermission(REQUEST_ID_READ_PERMISSION,Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -139,6 +141,7 @@ public class ChiTietTruyen_Fragment extends Fragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
                 noiDung.setTextSize(TypedValue.COMPLEX_UNIT_DIP,progress+10);
             }
 
@@ -152,26 +155,8 @@ public class ChiTietTruyen_Fragment extends Fragment {
 
             }
         });
-
-        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                scrollView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scrollView.smoothScrollTo(0,trang);
-                    }
-                });
-            }
-        });
         return view;
 
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.scrlView).scrollTo(0,500);
     }
     public int getTrangDaXem(Truyen truyen1){
         MyDatabaseHelper helper = new MyDatabaseHelper(getContext());
@@ -187,7 +172,6 @@ public class ChiTietTruyen_Fragment extends Fragment {
                     return helper.getStory(truyen1.get_id(), "HistoryTB").getTrangDaXem();
                 }
             }
-
             return 0;
         }
     }
@@ -196,7 +180,6 @@ public class ChiTietTruyen_Fragment extends Fragment {
 
             // Check if we have permission
             int permission = ActivityCompat.checkSelfPermission(getActivity(), permissionName);
-
 
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // If don't have permission so prompt the user.
@@ -208,6 +191,22 @@ public class ChiTietTruyen_Fragment extends Fragment {
             }
         }
         return true;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        final int trang = getTrangDaXem(truyen);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.smoothScrollTo(0,trang);
+                    }
+                });
+            }
+        });
     }
 
     @Override

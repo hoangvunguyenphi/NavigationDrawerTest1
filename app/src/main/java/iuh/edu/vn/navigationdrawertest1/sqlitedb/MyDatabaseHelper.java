@@ -22,10 +22,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TIEUDE="tieuDe";
     private static final String COLUMN_TACGIA="tacGia";
     private static final String COLUMN_MOTA="moTa";
-    private static final String COLUMN_NOIDUNG="noiDung";;
+    private static final String COLUMN_NOIDUNG="noiDung";
     private static final String COLUMN_NGAYTAO="ngayTao";
     private static final String COLUMN_DANHMUC="danhMuc";
     private static final String COLUMN_TRANG="trangDaXem";
+    private static final String COLUMN_TEXTCOLOR="textColor";
+    private static final String COLUMN_BACKGROUNDCOLOR="backgroundColor";
+    private static final String COLUMN_TEXTSIZE="textSize";
 
     public MyDatabaseHelper( Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -58,6 +61,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_DANHMUC + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_MOTA + " NVARCHAR(10000) NOT NULL ,"
                 + COLUMN_NOIDUNG + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_NGAYTAO + " NVARCHAR(100) NOT NULL ,"
+                + COLUMN_TRANG + " INT )" ;
+        String script4="CREATE TABLE " + "SettingTB" +
+                " (" + COLUMN_ID +" NVARCHAR(50) PRIMARY KEY NOT NULL , "
+                + COLUMN_TIEUDE + " NVARCHAR(200) NOT NULL ,"
                 + COLUMN_NGAYTAO + " NVARCHAR(100) NOT NULL ,"
                 + COLUMN_TRANG + " INT )" ;
         db.execSQL(script);

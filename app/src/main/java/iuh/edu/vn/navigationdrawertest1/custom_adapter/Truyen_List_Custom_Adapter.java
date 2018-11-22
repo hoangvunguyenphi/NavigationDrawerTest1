@@ -40,7 +40,7 @@ public class Truyen_List_Custom_Adapter  extends ArrayAdapter<Truyen> {
         txtTenTruyen.setText(truyen.getTieuDe());
         txtNoiDung.setText(truyen.getMoTa());
         txtTacGia.setText("- "+truyen.getTacGia());
-        txtNgayTao.setText(truyen.getNoiDung());
+        txtNgayTao.setText(truyen.getNgayTao());
         return convertView;
     }
 }
